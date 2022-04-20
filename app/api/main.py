@@ -8,8 +8,12 @@ app = FastAPI()
 app.mount("/static", StaticFiles(directory="app/static"), name="static")
 
 
+class Session:
+    data = {}
+
+
 @app.get("/", response_class=HTMLResponse)
 async def splashpage(request: Request):
     return settings.TEMPLATES.TemplateResponse(
-        "index.html", {"request": request, "sessions": ["one", "twp"]}
+        "index.html", {"request": request, "sessions": Session.data.keys()}
     )
