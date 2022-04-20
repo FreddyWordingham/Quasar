@@ -30,8 +30,40 @@
                                 API
                             </button>
                             <hr />
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"
+                                        >Session ID</span
+                                    >
+                                </div>
+                                <input
+                                    name="session_id"
+                                    id="session_id_input"
+                                    type="text"
+                                    class="form-control"
+                                    value="some_random_string"
+                                />
+                            </div>
                             <div style="margin-bottom: 15px"></div>
-                            <button class="btn btn-primary">Launch</button>
+                            <ul class="list-group">
+                                {% for session_id in sessions %}
+                                <li
+                                    class="list-group-item list-group-item-action"
+                                    onclick="$index.select_session_id('{{ session_id }}')"
+                                >
+                                    {{ session_id }}
+                                </li>
+                                {% endfor %}
+                            </ul>
+                            {% if sessions %}
+                            <div style="margin-bottom: 15px"></div>
+                            {% endif %}
+                            <button
+                                class="btn btn-primary"
+                                onclick="$index.launch_session()"
+                            >
+                                Launch
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -40,5 +72,22 @@
         </div>
     </div>
 </div>
+
+<script>
+    $index = {
+        select_session_id: function (session_id) {
+            $("#session_id_input").val(session_id);
+        },
+
+        launch_session: function () {
+            let session_id = $("#session_id_input").val();
+            window.location.replace("/session/" + session_id);
+        },
+    };
+
+    $(document).ready(function () {
+        $("#session_id_input").val(new Date().toISOString());
+    });
+</script>
 
 {% endblock %}

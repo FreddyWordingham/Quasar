@@ -10,4 +10,6 @@ app.mount("/static", StaticFiles(directory="app/static"), name="static")
 
 @app.get("/", response_class=HTMLResponse)
 async def splashpage(request: Request):
-    return settings.TEMPLATES.TemplateResponse("index.html", {"request": request})
+    return settings.TEMPLATES.TemplateResponse(
+        "index.html", {"request": request, "sessions": ["one", "twp"]}
+    )
