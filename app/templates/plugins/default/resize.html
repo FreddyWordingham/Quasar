@@ -1,0 +1,24 @@
+<style>
+    .widget.resize {
+        display: none;
+    }
+</style>
+
+<script>
+    var $resize = {
+        init: function () {
+            $(".content").css("resize", "both").css("overflow", "auto");
+        },
+
+        del: function () {
+            $(".content").css("resize", "initial");
+        },
+    };
+
+    $(document).ready(function () {
+        $plugin.init["resize"] = $resize.init;
+        $plugin.del["resize"] = $resize.del;
+
+        $plugin.init["resize"]();
+    });
+</script>

@@ -4,7 +4,7 @@
 
 <div id="plugin_container">
     {% for group_name, item_name in active_plugins %}
-        {{ group_name }} - {{ item_name }}
+        {% include "components/widget.html" %}
     {% endfor %}
 </div>
 

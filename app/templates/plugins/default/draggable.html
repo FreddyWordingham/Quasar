@@ -1,0 +1,71 @@
+<style>
+    .widget.draggable {
+        display: none;
+    }
+</style>
+
+<script>
+    var $draggable = {
+        init: function () {
+            $(".titlebar").css("cursor", "move");
+
+            $(".widget")
+                .css("position", "absolute")
+                .each(function () {
+                    $draggable.make_draggable(this);
+                });
+        },
+
+        del: function () {
+            $(".titlebar").css("cursor", "default").off("mousedown");
+        },
+
+        make_draggable: function (elem) {
+            var new_x = 0;
+            var new_y = 0;
+            var old_x = 0;
+            var old_y = 0;
+
+            let plugin_name = $(elem).data("plugin_name");
+            let group_name = $(elem).data("group_name");
+
+            $(".titlebar." + plugin_name).mousedown(drag_on_mousedown);
+
+            function drag_on_mousedown(event) {
+                event = event || window.event;
+                event.preventDefault();
+
+                old_x = event.clientX;
+                old_y = event.clientY;
+
+                document.onmouseup = stop_dragging;
+                document.onmousemove = start_dragging;
+            }
+
+            function start_dragging(event) {
+                event = event || window.event;
+                event.preventDefault();
+
+                new_x = old_x - event.clientX;
+                new_y = old_y - event.clientY;
+                old_x = event.clientX;
+                old_y = event.clientY;
+
+                elem.style.top = elem.offsetTop - new_y + "px";
+                elem.style.left = elem.offsetLeft - new_x + "px";
+            }
+
+            function stop_dragging() {
+                document.onmouseup = null;
+                document.onmousemove = null;
+            }
+        },
+    };
+
+    $(document).ready(function () {
+        $plugin.init["draggable"] = $draggable.init;
+        $plugin.del["draggable"] = $draggable.del;
+
+        $plugin.init["draggable"]();
+    });
+</script>

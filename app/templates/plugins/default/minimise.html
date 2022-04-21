@@ -1,0 +1,50 @@
+<style>
+    .widget.minimise {
+        display: none;
+    }
+</style>
+
+<script>
+    var $minimise = {
+        init: function () {
+            $(".buttons").each(function () {
+                if ($(this).children(".minimise").length == 0) {
+                    let group_name = $(this)
+                        .parent()
+                        .parent()
+                        .attr("data-plugin_group");
+                    let item_name = $(this)
+                        .parent()
+                        .parent()
+                        .attr("data-plugin_name");
+                    $(this).append(
+                        "<span class='dot minimise' style='order:-2; background-color:#BB0;' onclick='$minimise.toggle(\"" +
+                            group_name +
+                            '", "' +
+                            item_name +
+                            "\")'></span>"
+                    );
+                }
+            });
+        },
+
+        del: function () {
+            $(".content").show(500);
+            $(".dot.minimise").remove();
+        },
+
+        toggle: function (group_name, item_name) {
+            $(".content." + item_name)
+                .parent()
+                .css("height", "initial");
+            $(".content." + item_name).toggle(500);
+        },
+    };
+
+    $(document).ready(function () {
+        $plugin.init["minimise"] = $minimise.init;
+        $plugin.del["minimise"] = $minimise.del;
+
+        $plugin.init["minimise"]();
+    });
+</script>

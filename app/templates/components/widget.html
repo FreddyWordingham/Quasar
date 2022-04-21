@@ -1,0 +1,22 @@
+<div
+    class="{{ item_name }} widget"
+    data-plugin_name="{{ item_name }}"
+    data-plugin_group="{{ group_name }}"
+>
+    <div class="{{ item_name }} titlebar">
+        <div class="{{ item_name }} buttons"></div>
+        <b>{{ item_name }}</b>
+    </div>
+    <div class="{{ item_name }} content">
+        {% set path = "plugins/" + group_name + "/" + item_name + ".html" %}{%
+        include path %}
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        for (let func in $plugin.init) {
+            $plugin.init[func]();
+        }
+    });
+</script>

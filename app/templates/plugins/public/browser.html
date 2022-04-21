@@ -1,0 +1,46 @@
+<style>
+  #browser_window {
+    width: 100%;
+    height: 60vh;
+  }
+
+  .widget.browser {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+</style>
+
+<div class="d-flex justify-content-between">
+  <input
+    type="text"
+    id="browser_address_input"
+    class="form-control"
+    value="https://project-bluebird.github.io/StarlingDocs/"
+    onkeyup="$browser.handle_keypress()"
+  />
+  <button class="btn btn-primary" onclick="$browser.goto_website()">Go</button>
+</div>
+<div style="overflow: scroll; margin-top: 5px">
+  <iframe
+    id="browser_window"
+    src="https://project-bluebird.github.io/StarlingDocs/"
+    onresize="$browser.handle_resize()"
+  ></iframe>
+</div>
+
+<script>
+  var $browser = {
+    goto_website: function () {
+      $("#browser_window").attr("src", $("#browser_address_input").val());
+    },
+
+    handle_keypress: function () {
+      if (event.keyCode === 13) {
+        event.preventDefault();
+        $browser.goto_website();
+      }
+    },
+  };
+</script>

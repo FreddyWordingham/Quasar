@@ -1,0 +1,24 @@
+<style>
+    .widget.session {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+</style>
+
+<div style="text-align-last: center">
+    Session ID: {{ session_id }}
+    <button type="button" class="btn btn-danger" onclick="$session.end()">
+        End
+    </button>
+</div>
+
+<script>
+    $session = {
+        end: function () {
+            $.post("/session/" + $session_id + "/end", {}, function (response) {
+                window.location.replace("/");
+            });
+        },
+    };
+</script>

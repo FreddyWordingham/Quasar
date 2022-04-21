@@ -1,0 +1,27 @@
+<style>
+  .widget.test {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+</style>
+
+<h1>{{ group_name }}-{{ item_name }}</h1>
+
+<script>
+  $(document).ready(function () {
+    $plugin.init["test"] = $test.init;
+    $plugin.del["test"] = $test.del;
+  });
+
+  var $test = {
+    init: function () {
+      console.log("Hello, world!");
+    },
+
+    del: function () {
+      console.log("Goodbye, world!");
+    },
+  };
+</script>

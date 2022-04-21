@@ -1,0 +1,64 @@
+<style>
+  .scatter_plot.content {
+    width: 100px;
+  }
+</style>
+
+<div class="input-group">
+  <div class="input-group-prepend">
+    <span class="input-group-text">Update</span>
+  </div>
+
+  <input
+    id="scatter_plot_update_period_input"
+    type="number"
+    class="form-control"
+    onChange="$scatter_plot.start_updating()"
+    value="1"
+    min="1"
+  />
+
+  <div class="input-group-append">
+    <span class="input-group-text">Sec</span>
+  </div>
+</div>
+
+<img class="scatter_plot display"></img>
+<div id="scatter_plot_update"></div>
+
+<script>
+  var $scatter_plot = {
+    update: function () {
+      $.get(
+        Flask.url_for("display", { item_name: "scatter_plot" }),
+        function (response) {
+          $("#scatter_plot_update").html(response);
+        }
+      );
+    },
+
+    update_interval: null,
+    start_updating: function () {
+      window.clearInterval($scatter_plot.update_interval);
+      $scatter_plot.update_interval = null;
+
+      let update_period = $("#scatter_plot_update_period_input").val() * 1000.0;
+      $scatter_plot.update_interval = window.setInterval(
+        $scatter_plot.update,
+        update_period
+      );
+    },
+
+    del: function () {
+      window.clearInterval($scatter_plot.update_interval);
+      $scatter_plot.update_interval = null;
+    },
+  };
+
+  $(document).ready(function () {
+    $plugin.del["scatter_plot"] = $scatter_plot.del;
+
+    $scatter_plot.update();
+    $scatter_plot.start_updating();
+  });
+</script>

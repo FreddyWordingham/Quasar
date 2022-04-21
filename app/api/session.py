@@ -26,7 +26,13 @@ async def load(request: Request, session_id: str):
         {
             "request": request,
             "session_id": session_id,
-            "active_plugins": [["public", "one"], ["private", "two"]],
+            "active_plugins": [
+                ["default", "draggable"],
+                ["default", "minimise"],
+                ["default", "resize"],
+                ["default", "session"],
+                ["private", "test"],
+            ],
         },
     )
 
@@ -47,10 +53,10 @@ async def new(session_id: str):
     return session_id
 
 
-@session_route.post("/{session_id}/delete")
-async def delete(session_id: str):
+@session_route.post("/{session_id}/end")
+async def end(session_id: str):
     """
-    Delete an existing session.
+    End an existing session.
     """
 
     if session_id not in Session.data.keys():

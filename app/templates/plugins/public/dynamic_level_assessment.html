@@ -1,0 +1,62 @@
+<style>
+  .dynamic_level_assessment.content {
+    width: 100px;
+  }
+</style>
+
+<div class="input-group">
+  <div class="input-group-prepend">
+    <span class="input-group-text">Update</span>
+  </div>
+  <input
+    id="dynamic_level_assessment_update_period_input"
+    type="number"
+    class="form-control"
+    onChange="$dynamic_level_assessment.start_updating()"
+    value="1"
+    min="1"
+  />
+  <div class="input-group-append">
+    <span class="input-group-text">Sec</span>
+  </div>
+</div>
+
+<img class="dynamic_level_assessment display"></img>
+<div id="dynamic_level_assessment_update"></div>
+
+<script>
+  var $dynamic_level_assessment = {
+    update: function () {
+      $.get(
+        Flask.url_for("display", { item_name: "dynamic_level_assessment" }),
+        function (response) {
+          $("#dynamic_level_assessment_update").html(response);
+        }
+      );
+    },
+
+    update_interval: null,
+    start_updating: function () {
+      window.clearInterval($dynamic_level_assessment.update_interval);
+      $dynamic_level_assessment.update_interval = null;
+
+      let update_period = $("#dynamic_level_assessment_update_period_input").val() * 1000.0;
+      $dynamic_level_assessment.update_interval = window.setInterval(
+        $dynamic_level_assessment.update,
+        update_period
+      );
+    },
+
+    del: function () {
+      window.clearInterval($dynamic_level_assessment.update_interval);
+      $dynamic_level_assessment.update_interval = null;
+    },
+  };
+
+  $(document).ready(function () {
+    $plugin.del["dynamic_level_assessment"] = $dynamic_level_assessment.del;
+
+    $dynamic_level_assessment.update();
+    $dynamic_level_assessment.start_updating();
+  });
+</script>
