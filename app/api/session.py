@@ -73,11 +73,22 @@ async def new(session_id: str):
         raise ValueError(f"Session: '{session_id}' already exists.")
 
     Session.data[session_id] = init_session_filesystem(session_id)
-
-    proc = Popen(["cargo", "run", session_id])
-    Session.data[session_id]["pid"] = proc.pid
+    Session.data[session_id]["process"] = Popen(["cargo", "run", session_id])
 
     return session_id
+
+
+@session_route.post("/id/{session_id}/status")
+async def status(session_id: str):
+    """
+    Check the running status of the session.
+    Return True if the session is running.
+    """
+
+    if Session.data[session_id]["process"].poll() is not None:
+        return False
+
+    return True
 
 
 @session_route.post("/id/{session_id}/end")
@@ -89,7 +100,7 @@ async def end(session_id: str):
     if session_id not in Session.data.keys():
         raise ValueError(f"Session: '{session_id}' does not exist.")
 
-    os.kill(Session.data[session_id]["pid"], signal.SIGTERM)
+    os.kill(Session.data[session_id]["procress"].pid, signal.SIGTERM)
 
     Session.data.pop(session_id)
 
