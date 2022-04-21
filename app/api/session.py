@@ -89,6 +89,27 @@ async def end(session_id: str):
     return "Success"
 
 
+class WriteCommand(BaseModel):
+    command: str
+
+
+@session_route.post("/id/{session_id}/write")
+async def write(session_id: str, write_command: WriteCommand):
+    """
+    Write a command to session input.
+    """
+
+    if session_id not in Session.data.keys():
+        raise ValueError(f"Session: '{session_id}' does not exist.")
+
+    command = re.sub("[^a-zA-Z\d:-_]", "", write_command.command)
+
+    with open(Session.data[session_id]["input"]) as file:
+        file.write(f"{command}\n")
+
+    return "Success"
+
+
 def init_session_filesystem(session_id: str):
     """
     Check that the session_id is not already in use.
