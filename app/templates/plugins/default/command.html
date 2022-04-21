@@ -77,7 +77,9 @@ Output</textarea
                 "/session/id/" + $session_id + "/log/input",
                 {},
                 function (response) {
-                    $("#command-input").val(response);
+                    $("#command-input")
+                        .val(response)
+                        .scrollTop($("#command-input").height());
                 }
             );
 
@@ -85,7 +87,9 @@ Output</textarea
                 "/session/id/" + $session_id + "/log/output",
                 {},
                 function (response) {
-                    $("#command-output").val(response);
+                    $("#command-output")
+                        .val(response)
+                        .scrollTop($("#command-output").height());
                 }
             );
         }, 1000);
