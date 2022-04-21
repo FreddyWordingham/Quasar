@@ -102,7 +102,7 @@ async def write(session_id: str, write_command: WriteCommand):
     if session_id not in Session.data.keys():
         raise ValueError(f"Session: '{session_id}' does not exist.")
 
-    command = re.sub("[^a-zA-Z\d:-_]", "", write_command.command)
+    command = re.sub("[^a-zA-Z\d:-_ #]", "", write_command.command)
 
     with open(Session.data[session_id]["input"], "a") as file:
         file.write(f"{command}\n")
