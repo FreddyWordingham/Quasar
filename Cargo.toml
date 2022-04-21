@@ -2,5 +2,9 @@
 name = "quasar"
 version = "0.1.0"
 edition = "2021"
+description = "Let there be light"
+repository = "https://github.com/FreddyWordingham/Quasar"
+keywords = ["render", "physics", "simulation"]
+categories = ["science", "simulation"]
 
 [dependencies]
