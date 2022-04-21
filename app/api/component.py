@@ -9,7 +9,11 @@ component_route = APIRouter()
 
 @component_route.get("/list_items/{dir:path}")
 async def list_items(dir):
-    dir = os.path.join(settings.APP_DIR, dir)
+    """
+    List the filenames in a given directory.
+    """
 
-    item_names = [os.path.splitext(filename)[0] for filename in os.listdir(dir)]
-    return item_names
+    return [
+        os.path.splitext(filename)[0]
+        for filename in os.listdir(os.path.join(settings.APP_DIR, dir))
+    ]

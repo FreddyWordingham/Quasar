@@ -2,13 +2,17 @@ from fastapi import APIRouter, Request
 from fastapi.responses import HTMLResponse
 import re
 
-from . import settings, utility
+from . import component, settings
 
 
 session_route = APIRouter()
 
 
 class Session:
+    """
+    Session data.
+    """
+
     data = {}
 
 
@@ -22,7 +26,8 @@ async def load(request: Request, session_id: str):
         raise ValueError(f"Session: '{session_id}' does not exist.")
 
     active_plugins = [
-        ["default", item_name] for item_name in utility.get_plugin_list("default")
+        ["default", item_name]
+        for item_name in await component.list_items("templates/plugins/default")
     ]
 
     return settings.TEMPLATES.TemplateResponse(
