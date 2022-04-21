@@ -1,6 +1,9 @@
+from datetime import datetime
 from fastapi import APIRouter, Request
 from fastapi.responses import HTMLResponse
+import os
 import re
+import shutil
 
 from . import component, settings
 
@@ -46,12 +49,14 @@ async def new(session_id: str):
     Create a new session.
     """
 
+    # Remove illegal characters.
     session_id = re.sub("[^a-zA-Z\d:-_]", "", session_id)
 
+    # Check session_id is not already in use.
     if session_id in Session.data.keys():
         raise ValueError(f"Session: '{session_id}' already exists.")
 
-    Session.data[session_id] = {}
+    Session.data[session_id] = init_session_filesystem(session_id)
 
     return session_id
 
@@ -68,3 +73,30 @@ async def end(session_id: str):
     Session.data.pop(session_id)
 
     return "Success"
+
+
+def init_session_filesystem(session_id: str):
+    """
+    Check that the session_id is not already in use.
+    Initialise the filesystem for a new session.
+    Store path inforation in Session.data dictionary.
+    """
+
+    # Calculate file paths.
+    dir = os.path.join(settings.SESSIONS_DIR, session_id)
+    input = os.path.join(dir, "session.input")
+    output = os.path.join(dir, "session.output")
+
+    # Initialise files and directories.
+    if os.path.exists(dir):
+        shutil.rmtree(dir)
+    os.makedirs(dir)
+
+    creation_time = datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
+    with open(input, "w") as file:
+        file.write(f"# SESSION INPUT\n# Start: {creation_time}\n")
+
+    with open(output, "w") as file:
+        file.write(f"# SESSION OUTPUT\n# Start: {creation_time}\n")
+
+    {"dir": dir, "input": input, "output": output}

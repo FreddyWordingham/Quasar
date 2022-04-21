@@ -8,3 +8,4 @@ keywords = ["render", "physics", "simulation"]
 categories = ["science", "simulation"]
 
 [dependencies]
+notify = "4.0.17"

@@ -1,4 +1,5 @@
-use std::path::PathBuf;
+use notify::{watcher, RecursiveMode, Watcher};
+use std::{env::current_dir, path::PathBuf, sync::mpsc::channel, time::Duration};
 
 use quasar::args;
 
@@ -7,15 +8,28 @@ use quasar::args;
 /// calling a processing function with any new commands.
 /// After each check, sleep for the given interval [sec].
 fn main() {
-    args!(_bin_path: PathBuf, session_id: String, sleep_time: f32);
+    args!(_bin_path: PathBuf, session_id: String, sleep_time: u64);
+    println!(
+        "[{}] Running at: {}",
+        session_id,
+        current_dir().unwrap().display()
+    );
 
-    let interval = (sleep_time * 1000.0) as u64;
+    let (tx, rx) = channel();
+    let mut watcher = watcher(tx, Duration::from_secs(sleep_time)).unwrap();
 
-    let mut loop_counter = 0;
+    let session_dir = format!(
+        "{}{}",
+        "/app/static/sessions/server_command.log", session_id
+    );
+    println!("Session dir: {}", session_dir);
+    watcher
+        .watch(session_dir, RecursiveMode::Recursive)
+        .unwrap();
     loop {
-        println!("[{}] {:4} > Hello, world!", session_id, loop_counter);
-
-        std::thread::sleep(std::time::Duration::from_millis(interval));
-        loop_counter += 1;
+        match rx.recv() {
+            Ok(event) => println!("{:?}", event),
+            Err(e) => println!("watch error: {:?}", e),
+        }
     }
 }
