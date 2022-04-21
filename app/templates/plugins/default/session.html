@@ -16,9 +16,13 @@
 <script>
     $session = {
         end: function () {
-            $.post("/session/" + $session_id + "/end", {}, function (response) {
-                window.location.replace("/");
-            });
+            $.post(
+                "/session/id/" + $session_id + "/end",
+                {},
+                function (response) {
+                    window.location.replace("/");
+                }
+            );
         },
     };
 </script>

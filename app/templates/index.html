@@ -43,8 +43,7 @@
                                     </button>
                                 </div>
                                 <input
-                                    name="session_id"
-                                    id="session_id_input"
+                                    id="index-session_id"
                                     type="text"
                                     class="form-control"
                                     value="some_random_string"
@@ -55,7 +54,7 @@
                                 <div class="input-group-append">
                                     <button
                                         class="btn btn-primary"
-                                        onclick="location.href='/session/{{ session_id }}'"
+                                        onclick="location.href='/session/id/{{ session_id }}'"
                                     >
                                         Load
                                     </button>
@@ -88,19 +87,19 @@
 <script>
     $index = {
         start_session: function () {
-            let session_id = $("#session_id_input").val();
+            let session_id = $("#index-session_id").val();
             $.post(
-                "/session/" + session_id + "/new",
+                "/session/id/" + session_id + "/new",
                 {},
                 function (session_id) {
-                    window.location.replace("/session/" + session_id);
+                    window.location.replace("/session/id/" + session_id);
                 }
             );
         },
 
         end_session: function (elem, session_id) {
             $.post(
-                "/session/" + session_id + "/end",
+                "/session/id/" + session_id + "/end",
                 {},
                 function (session_id) {
                     $(elem).parent().parent().hide();
@@ -110,7 +109,7 @@
     };
 
     $(document).ready(function () {
-        $("#session_id_input").val(new Date().toISOString());
+        $("#index-session_id").val(new Date().toISOString());
     });
 </script>
 
