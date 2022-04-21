@@ -1,7 +1,7 @@
 use linemux::MuxedLines;
 use std::{fs::OpenOptions, io::Write, path::PathBuf};
 
-use quasar::args;
+use quasar::{args, Session};
 
 /// Handles a single computation session.
 /// Watch an input file for newly added lines,
@@ -15,6 +15,8 @@ async fn main() -> std::io::Result<()> {
     let input = session_dir.join("session.input");
     let output = session_dir.join("session.output");
 
+    let mut session = Session::new(session_id);
+
     let mut lines = MuxedLines::new()?;
     lines.add_file(input).await?;
 
@@ -25,11 +27,13 @@ async fn main() -> std::io::Result<()> {
             continue;
         }
 
+        let response = session.process(command);
+
         let mut outfile = OpenOptions::new()
             .append(true)
             .open(output.clone())
             .unwrap();
-        writeln!(outfile, "Received: {}", command).unwrap();
+        writeln!(outfile, "{}", response).unwrap();
     }
 
     Ok(())

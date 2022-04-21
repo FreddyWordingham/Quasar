@@ -131,6 +131,22 @@ async def write(session_id: str, write_command: WriteCommand):
     return "Success"
 
 
+@session_route.get("/id/{session_id}/log/{log}")
+async def read_log(session_id: str, log: str):
+    """
+    Read the from the input or output log.
+    """
+
+    if session_id not in Session.data.keys():
+        raise ValueError(f"Session: '{session_id}' does not exist.")
+
+    content = ""
+    with open(Session.data[session_id][log], "r") as file:
+        content = file.read()
+
+    return content
+
+
 def init_session_filesystem(session_id: str):
     """
     Check that the session_id is not already in use.
