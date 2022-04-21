@@ -1,9 +1,11 @@
 from datetime import datetime
 from fastapi import APIRouter, Request
 from pydantic import BaseModel
+from subprocess import Popen
 import os
 import re
 import shutil
+import signal
 
 from . import component, settings
 
@@ -72,6 +74,9 @@ async def new(session_id: str):
 
     Session.data[session_id] = init_session_filesystem(session_id)
 
+    proc = Popen(["cargo", "run", session_id])
+    Session.data[session_id]["pid"] = proc.pid
+
     return session_id
 
 
@@ -83,6 +88,8 @@ async def end(session_id: str):
 
     if session_id not in Session.data.keys():
         raise ValueError(f"Session: '{session_id}' does not exist.")
+
+    os.kill(Session.data[session_id]["pid"], signal.SIGTERM)
 
     Session.data.pop(session_id)
 
