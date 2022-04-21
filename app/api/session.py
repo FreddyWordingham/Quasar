@@ -12,22 +12,6 @@ class Session:
     data = {}
 
 
-@session_route.post("/{session_id}")
-async def new(session_id: str):
-    """
-    Create a new session.
-    """
-
-    session_id = re.sub("[^a-zA-Z\d:]", "", session_id)
-
-    if session_id in Session.data.keys():
-        raise ValueError(f"Session: '{session_id}' already exists.")
-
-    Session.data[session_id] = {}
-
-    return session_id
-
-
 @session_route.get("/{session_id}")
 async def load(request: Request, session_id: str):
     """
@@ -44,3 +28,33 @@ async def load(request: Request, session_id: str):
             "session_id": session_id,
         },
     )
+
+
+@session_route.post("/{session_id}/new")
+async def new(session_id: str):
+    """
+    Create a new session.
+    """
+
+    session_id = re.sub("[^a-zA-Z\d:-]", "", session_id)
+
+    if session_id in Session.data.keys():
+        raise ValueError(f"Session: '{session_id}' already exists.")
+
+    Session.data[session_id] = {}
+
+    return session_id
+
+
+@session_route.post("/{session_id}/delete")
+async def delete(session_id: str):
+    """
+    Delete an existing session.
+    """
+
+    if session_id not in Session.data.keys():
+        raise ValueError(f"Session: '{session_id}' does not exist.")
+
+    Session.data.pop(session_id)
+
+    return "Success"

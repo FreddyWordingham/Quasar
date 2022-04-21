@@ -30,11 +30,17 @@
                                 API
                             </button>
                             <hr />
-                            <div class="input-group">
+                            <div
+                                class="input-group"
+                                style="margin-bottom: 15px"
+                            >
                                 <div class="input-group-prepend">
-                                    <span class="input-group-text"
-                                        >Session ID</span
+                                    <button
+                                        class="btn btn-primary"
+                                        onclick="$index.start_session()"
                                     >
+                                        New
+                                    </button>
                                 </div>
                                 <input
                                     name="session_id"
@@ -44,26 +50,32 @@
                                     value="some_random_string"
                                 />
                             </div>
-                            <div style="margin-bottom: 15px"></div>
-                            <ul class="list-group">
-                                {% for session_id in sessions %}
-                                <li
-                                    class="list-group-item list-group-item-action"
-                                    onclick="location.href='/session/{{ session_id }}'"
-                                >
-                                    {{ session_id }}
-                                </li>
-                                {% endfor %}
-                            </ul>
-                            {% if sessions %}
-                            <div style="margin-bottom: 15px"></div>
-                            {% endif %}
-                            <button
-                                class="btn btn-primary"
-                                onclick="$index.launch_session()"
-                            >
-                                Launch
-                            </button>
+                            {% for session_id in sessions %}
+                            <div class="input-group" style="margin-bottom: 5px">
+                                <div class="input-group-append">
+                                    <button
+                                        class="btn btn-primary"
+                                        onclick="location.href='/session/{{ session_id }}'"
+                                    >
+                                        Load
+                                    </button>
+                                </div>
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    value="{{ session_id }}"
+                                    disabled
+                                />
+                                <div class="input-group-append">
+                                    <button
+                                        class="btn btn-danger"
+                                        onclick="$index.end_session(this, '{{ session_id }}')"
+                                    >
+                                        Delete
+                                    </button>
+                                </div>
+                            </div>
+                            {% endfor %}
                         </div>
                     </div>
                 </div>
@@ -75,12 +87,25 @@
 
 <script>
     $index = {
-        launch_session: function () {
+        start_session: function () {
             let session_id = $("#session_id_input").val();
+            $.post(
+                "/session/" + session_id + "/new",
+                {},
+                function (session_id) {
+                    window.location.replace("/session/" + session_id);
+                }
+            );
+        },
 
-            $.post("/session/" + session_id, {}, function (session_id) {
-                window.location.replace("/session/" + session_id);
-            });
+        end_session: function (elem, session_id) {
+            $.post(
+                "/session/" + session_id + "/delete",
+                {},
+                function (session_id) {
+                    $(elem).parent().parent().hide();
+                }
+            );
         },
     };
 
