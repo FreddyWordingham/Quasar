@@ -100,7 +100,7 @@
 
         end_session: function (elem, session_id) {
             $.post(
-                "/session/" + session_id + "/delete",
+                "/session/" + session_id + "/end",
                 {},
                 function (session_id) {
                     $(elem).parent().parent().hide();
