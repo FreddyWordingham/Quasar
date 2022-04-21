@@ -3,17 +3,17 @@ from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 
 from . import settings
+from .session import Session, session_route
 
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="app/static"), name="static")
-
-
-class Session:
-    data = {}
+app.include_router(session_route, prefix="/session")
 
 
 @app.get("/", response_class=HTMLResponse)
 async def splashpage(request: Request):
+    print("Sessions : ", Session.data.keys())
+
     return settings.TEMPLATES.TemplateResponse(
         "index.html", {"request": request, "sessions": Session.data.keys()}
     )
