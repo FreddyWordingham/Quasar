@@ -12,7 +12,9 @@ app.include_router(session_route, prefix="/session")
 
 @app.get("/", response_class=HTMLResponse)
 async def splashpage(request: Request):
-    print("Sessions : ", Session.data.keys())
+    """
+    Session control.
+    """
 
     return settings.TEMPLATES.TemplateResponse(
         "index.html", {"request": request, "sessions": Session.data.keys()}
