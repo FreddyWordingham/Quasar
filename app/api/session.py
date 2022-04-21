@@ -100,7 +100,10 @@ async def end(session_id: str):
     if session_id not in Session.data.keys():
         raise ValueError(f"Session: '{session_id}' does not exist.")
 
-    os.kill(Session.data[session_id]["procress"].pid, signal.SIGTERM)
+    try:
+        os.kill(Session.data[session_id]["process"].pid, signal.SIGTERM)
+    except Exception:
+        pass
 
     Session.data.pop(session_id)
 

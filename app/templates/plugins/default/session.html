@@ -25,4 +25,20 @@
             );
         },
     };
+
+    $(document).ready(function () {
+        setInterval(function () {
+            $.post(
+                "/session/id/" + $session_id + "/status",
+                {},
+                function (response) {
+                    if (response) {
+                        console.log("Hello!");
+                    } else {
+                        console.log("Bad!");
+                    }
+                }
+            );
+        }, 1000);
+    });
 </script>
