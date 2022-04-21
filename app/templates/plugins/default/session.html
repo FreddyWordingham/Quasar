@@ -7,6 +7,11 @@
 </style>
 
 <div style="text-align-last: center">
+    <div
+        id="session-status"
+        class="spinner-grow spinner-grow-sm"
+        role="status"
+    ></div>
     Session ID: {{ session_id }}
     <button type="button" class="btn btn-danger" onclick="$session.end()">
         End
@@ -33,9 +38,13 @@
                 {},
                 function (response) {
                     if (response) {
-                        console.log("Hello!");
+                        $("#session-status")
+                            .addClass("text-success")
+                            .removeClass("text-danger");
                     } else {
-                        console.log("Bad!");
+                        $("#session-status")
+                            .addClass("text-danger")
+                            .removeClass("text-success");
                     }
                 }
             );
