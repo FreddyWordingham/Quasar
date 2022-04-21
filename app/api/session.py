@@ -19,7 +19,7 @@ class Session:
     data = {}
 
 
-@session_route.get("/clean")
+@session_route.post("/clean")
 async def clean():
     """
     Wipe all session data.

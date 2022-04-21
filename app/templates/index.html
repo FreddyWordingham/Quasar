@@ -75,6 +75,13 @@
                                 </div>
                             </div>
                             {% endfor %}
+                            <hr />
+                            <button
+                                class="btn btn-warning"
+                                onclick="$index.clean_session_data()"
+                            >
+                                Clean
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -105,6 +112,10 @@
                     $(elem).parent().parent().hide();
                 }
             );
+        },
+
+        clean_session_data: function () {
+            $.post("/session/clean");
         },
     };
 
