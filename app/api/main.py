@@ -21,3 +21,15 @@ async def splashpage(request: Request):
     return settings.TEMPLATES.TemplateResponse(
         "index.html", {"request": request, "sessions": Session.data.keys()}
     )
+
+
+import script
+
+
+@app.get("/test")
+async def test():
+    """
+    Rust communication test.
+    """
+
+    return script.test.hello_world()
