@@ -1,5 +1,20 @@
 {% extends "base.html" %} {% block content %}
 
-<h1>Session: {{ session_id }}</h1>
+<div id="display_container"></div>
+
+<div id="plugin_container">
+    {% for group_name, item_name in active_plugins %}
+        {{ group_name }} - {{ item_name }}
+    {% endfor %}
+</div>
+
+<script>
+    const $session_id = "{{ session_id }}";
+
+    var $plugin = {
+        init: {},
+        del: {},
+    };
+</script>
 
 {% endblock %}

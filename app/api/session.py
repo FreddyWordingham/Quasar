@@ -26,6 +26,7 @@ async def load(request: Request, session_id: str):
         {
             "request": request,
             "session_id": session_id,
+            "active_plugins": [["public", "one"], ["private", "two"]],
         },
     )
 
