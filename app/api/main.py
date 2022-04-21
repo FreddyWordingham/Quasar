@@ -3,10 +3,12 @@ from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 
 from . import settings
+from .component import component_route
 from .session import Session, session_route
 
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="app/static"), name="static")
+app.include_router(component_route, prefix="/component")
 app.include_router(session_route, prefix="/session")
 
 
