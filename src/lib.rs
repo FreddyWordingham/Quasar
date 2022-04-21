@@ -26,3 +26,5 @@
     clippy::module_name_repetitions,
     clippy::panic
 )]
+
+pub mod utility;
