@@ -19,7 +19,21 @@ class Session:
     data = {}
 
 
-@session_route.get("/{session_id}")
+@session_route.get("/clean")
+async def clean():
+    """
+    Wipe all session data.
+    """
+
+    for file in os.listdir(settings.SESSIONS_DIR):
+        filepath = os.path.join(settings.SESSIONS_DIR, file)
+        if os.path.isdir(filepath):
+            shutil.rmtree(filepath)
+
+    return "Success"
+
+
+@session_route.get("/id/{session_id}")
 async def load(request: Request, session_id: str):
     """
     Load an existing session.
@@ -43,7 +57,7 @@ async def load(request: Request, session_id: str):
     )
 
 
-@session_route.post("/{session_id}/new")
+@session_route.post("/id/{session_id}/new")
 async def new(session_id: str):
     """
     Create a new session.
@@ -61,7 +75,7 @@ async def new(session_id: str):
     return session_id
 
 
-@session_route.post("/{session_id}/end")
+@session_route.post("/id/{session_id}/end")
 async def end(session_id: str):
     """
     End an existing session.
