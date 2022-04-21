@@ -9,3 +9,4 @@ categories = ["science", "simulation"]
 
 [dependencies]
 linemux = "0.2.3"
+tokio = { version = "1.17.0", features = ["full"] }
