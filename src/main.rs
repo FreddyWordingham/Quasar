@@ -1,5 +1,8 @@
 use notify::{watcher, RecursiveMode, Watcher};
-use std::{env::current_dir, path::PathBuf, sync::mpsc::channel, time::Duration};
+use std::{
+    env::current_dir, fs::OpenOptions, io::Write, path::PathBuf, sync::mpsc::channel,
+    time::Duration,
+};
 
 use quasar::args;
 
@@ -15,21 +18,16 @@ fn main() {
         current_dir().unwrap().display()
     );
 
-    let (tx, rx) = channel();
-    let mut watcher = watcher(tx, Duration::from_secs(sleep_time)).unwrap();
+    let session_dir = PathBuf::from(format!("./app/static/sessions/{}", session_id));
+    let session_input = session_dir.join("session.input");
+    let session_output = session_dir.join("session.output");
 
-    let session_dir = format!(
-        "{}{}",
-        "/app/static/sessions/server_command.log", session_id
-    );
-    println!("Session dir: {}", session_dir);
-    watcher
-        .watch(session_dir, RecursiveMode::Recursive)
+    println!("Session dir: {}", session_dir.display());
+    println!("Session output: {}", session_output.display());
+
+    let mut outfile = OpenOptions::new()
+        .append(true)
+        .open(session_output)
         .unwrap();
-    loop {
-        match rx.recv() {
-            Ok(event) => println!("{:?}", event),
-            Err(e) => println!("watch error: {:?}", e),
-        }
-    }
+    writeln!(outfile, "Hello world!");
 }
