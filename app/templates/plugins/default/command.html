@@ -1,0 +1,44 @@
+<style>
+    .widget.command {
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        transform: translate(-50%, -100%);
+    }
+
+    .content.command {
+        overflow: hidden !important;
+    }
+</style>
+
+<div class="input-group">
+    <input
+        id="command-input"
+        type="text"
+        class="form-control"
+        placeholder="Command line interface"
+        onkeyup="$command.process_keystroke(event)"
+    />
+    <button
+        id="command-submit"
+        type="button"
+        class="btn btn-primary"
+        onclick="$command.submit()"
+    >
+        Submit
+    </button>
+</div>
+
+<script>
+    $command = {
+        process_keystroke: function (event) {
+            if (event.keyCode === 13) {
+                $("#command-submit").click();
+            }
+        },
+
+        submit: function () {
+            let command = $("#command-input").val();
+        },
+    };
+</script>
