@@ -39,6 +39,21 @@
 
         submit: function () {
             let command = $("#command-input").val();
+
+            $.ajax({
+                url: "/session/id/" + $session_id + "/write",
+                type: "post",
+                contentType: "application/json",
+                data: JSON.stringify({
+                    command: command,
+                }),
+                success: function (response) {
+                    $("#command-input").val("");
+                },
+                error: function () {
+                    console.log("error");
+                },
+            });
         },
     };
 </script>

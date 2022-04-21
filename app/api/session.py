@@ -1,6 +1,6 @@
 from datetime import datetime
 from fastapi import APIRouter, Request
-from fastapi.responses import HTMLResponse
+from pydantic import BaseModel
 import os
 import re
 import shutil
@@ -104,7 +104,7 @@ async def write(session_id: str, write_command: WriteCommand):
 
     command = re.sub("[^a-zA-Z\d:-_]", "", write_command.command)
 
-    with open(Session.data[session_id]["input"]) as file:
+    with open(Session.data[session_id]["input"], "a") as file:
         file.write(f"{command}\n")
 
     return "Success"
@@ -134,4 +134,4 @@ def init_session_filesystem(session_id: str):
     with open(output, "w") as file:
         file.write(f"# SESSION OUTPUT\n# Start: {creation_time}\n")
 
-    {"dir": dir, "input": input, "output": output}
+    return {"dir": dir, "input": input, "output": output}
