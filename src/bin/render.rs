@@ -5,7 +5,7 @@ use std::path::PathBuf;
 
 use quasar::{
     args,
-    parse::{json, png},
+    parse::{json, png, wavefront},
 };
 
 /// Configuration object.
@@ -50,9 +50,7 @@ fn load(config: Config) -> Config {
                 .join(name)
                 .with_extension("obj");
 
-            println!("Loading mesh: {}", path.display());
-
-            ()
+            wavefront::load(&path)
         })
         .collect();
 
