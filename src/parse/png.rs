@@ -13,7 +13,7 @@ pub fn save(image: ArrayView2<LinSrgba>, path: &Path) {
     let mut data: Array2<[u8; 4]> = Array2::from_elem((res[1], res[0]), [0; 4]);
     for xi in 0..res[0] {
         for yi in 0..res[1] {
-            data[(yi, xi)] = image[(xi, yi)].into_format().into_raw();
+            data[(res[1] - yi - 1, xi)] = image[(xi, yi)].into_format().into_raw();
         }
     }
 

@@ -48,6 +48,5 @@ fn run(config: Config) {
         }
     }
 
-    println!("CWD: {}", std::env::current_dir().unwrap().display());
     png::save(image.view(), &config.output_dir.join("output.png"));
 }
