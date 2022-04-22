@@ -1,7 +1,7 @@
 use linemux::MuxedLines;
 use std::{fs::OpenOptions, io::Write, path::PathBuf};
 
-use quasar::{args, Session};
+use quasar::args;
 
 /// Handles a single computation session.
 /// Watch an input file for newly added lines,
@@ -37,4 +37,27 @@ async fn main() -> std::io::Result<()> {
     }
 
     Ok(())
+}
+
+/// Session data.
+pub struct Session {
+    /// Unique identifier string.
+    id: String,
+}
+
+impl Session {
+    /// Construct a new session instance.
+    pub fn new(id: String) -> Session {
+        Session { id }
+    }
+
+    /// Run a command.
+    pub fn process(&mut self, command: &str) -> String {
+        format!("ERROR! Did not understand command '{}'.", command)
+    }
+
+    /// Get the session id.
+    pub fn id(&self) -> &str {
+        &self.id
+    }
 }

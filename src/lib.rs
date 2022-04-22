@@ -27,7 +27,4 @@
     clippy::panic
 )]
 
-pub mod session;
 pub mod utility;
-
-pub use self::session::*;

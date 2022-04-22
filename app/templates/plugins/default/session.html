@@ -33,10 +33,10 @@
 
     $(document).ready(function () {
         setInterval(function () {
-            $.post(
-                "/session/id/" + $session_id + "/status",
-                {},
-                function (response) {
+            $.ajax({
+                url: "/session/id/" + $session_id + "/status",
+                type: "post",
+                success: function (response) {
                     if (response) {
                         $("#session-status")
                             .addClass("text-success")
@@ -46,8 +46,13 @@
                             .addClass("text-danger")
                             .removeClass("text-success");
                     }
-                }
-            );
+                },
+                error: function (response) {
+                    $("#session-status")
+                        .addClass("text-danger")
+                        .removeClass("text-success");
+                },
+            });
         }, 1000);
     });
 </script>
