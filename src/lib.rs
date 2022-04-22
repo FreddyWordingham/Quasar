@@ -27,6 +27,7 @@
     clippy::panic
 )]
 
+pub mod algebra;
 pub mod geometry;
 pub mod parse;
 pub mod utility;
