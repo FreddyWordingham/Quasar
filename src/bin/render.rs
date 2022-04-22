@@ -1,10 +1,13 @@
+use ndarray::parallel::prelude::IntoParallelRefIterator;
 use ndarray::Array;
 use palette::LinSrgba;
+use rayon::prelude::*;
 use serde::Deserialize;
 use std::path::PathBuf;
 
 use quasar::{
     args,
+    geometry::Mesh,
     parse::{json, png, wavefront},
 };
 
@@ -17,8 +20,20 @@ pub struct Config {
     pub output_dir: PathBuf,
     /// Output image resolution.
     pub res: [usize; 2],
-    /// Meshes to render.
+    /// Mesh names to render.
     pub meshes: Vec<String>,
+}
+
+/// Runtime parameters.
+pub struct Parameters {
+    /// Path to the top level resource directory.
+    pub input_dir: PathBuf,
+    /// Path to the output directory.
+    pub output_dir: PathBuf,
+    /// Output image resolution.
+    pub res: [usize; 2],
+    /// Meshes to render.
+    pub meshes: Vec<Mesh>,
 }
 
 /// Main recipe function.
@@ -39,10 +54,10 @@ fn init() -> Config {
 /// Load resources.
 #[inline]
 #[must_use]
-fn load(config: Config) -> Config {
+fn load(config: Config) -> Parameters {
     let meshes: Vec<_> = config
         .meshes
-        .iter()
+        .into_par_iter()
         .map(|name| {
             let path = config
                 .input_dir
@@ -54,12 +69,17 @@ fn load(config: Config) -> Config {
         })
         .collect();
 
-    config
+    Parameters {
+        input_dir: config.input_dir,
+        output_dir: config.output_dir,
+        res: config.res,
+        meshes: meshes,
+    }
 }
 
 /// Run the simulation.
 #[inline]
-fn run(config: Config) {
+fn run(config: Parameters) {
     let mut image = Array::from_elem(
         (config.res[0], config.res[1]),
         LinSrgba::new(0.4, 0.6, 0.9, 0.5),
