@@ -29,12 +29,16 @@ fn main() {
 
 /// Read the input arguments.
 /// Return the configuration object.
+#[inline]
+#[must_use]
 fn init() -> Config {
     args!(_bin_path: PathBuf, params_path: PathBuf);
     json::load(&params_path)
 }
 
 /// Load resources.
+#[inline]
+#[must_use]
 fn load(config: Config) -> Config {
     let meshes: Vec<_> = config
         .meshes
@@ -56,6 +60,7 @@ fn load(config: Config) -> Config {
 }
 
 /// Run the simulation.
+#[inline]
 fn run(config: Config) {
     let mut image = Array::from_elem(
         (config.res[0], config.res[1]),

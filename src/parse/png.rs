@@ -7,6 +7,7 @@ use slice_of_array::SliceFlatExt;
 use std::{fs::File, io::BufWriter, path::Path};
 
 /// Save an array as a PNG file.
+#[inline]
 pub fn save(image: ArrayView2<LinSrgba>, path: &Path) {
     // Convert to png rgb space.
     let res = image.shape();

@@ -47,16 +47,22 @@ pub struct Session {
 
 impl Session {
     /// Construct a new session instance.
+    #[inline]
+    #[must_use]
     pub fn new(id: String) -> Session {
         Session { id }
     }
 
     /// Run a command.
+    #[inline]
+    #[must_use]
     pub fn process(&mut self, command: &str) -> String {
         format!("ERROR! Did not understand command '{}'.", command)
     }
 
     /// Get the session id.
+    #[inline]
+    #[must_use]
     pub fn id(&self) -> &str {
         &self.id
     }
