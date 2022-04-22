@@ -1,7 +1,7 @@
 use ndarray::Array;
 use palette::LinSrgba;
 use serde::Deserialize;
-use std::path::{Path, PathBuf};
+use std::path::PathBuf;
 
 use quasar::{
     args,
@@ -11,7 +11,9 @@ use quasar::{
 /// Configuration object.
 #[derive(Deserialize)]
 pub struct Config {
-    // Output image resolution.
+    /// Path to the output directory.
+    pub output_dir: PathBuf,
+    /// Output image resolution.
     pub res: [usize; 2],
 }
 
@@ -44,5 +46,6 @@ fn run(config: Config) {
         }
     }
 
-    png::save(image.view(), Path::new("output.png"));
+    println!("CWD: {}", std::env::current_dir().unwrap().display());
+    png::save(image.view(), &config.output_dir.join("output.png"));
 }
