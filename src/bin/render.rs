@@ -1,4 +1,3 @@
-use ndarray::parallel::prelude::IntoParallelRefIterator;
 use ndarray::Array;
 use palette::LinSrgba;
 use rayon::prelude::*;
