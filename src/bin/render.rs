@@ -17,12 +17,14 @@ pub struct Config {
     pub output_dir: PathBuf,
     /// Output image resolution.
     pub res: [usize; 2],
+    /// Meshes to render.
+    pub meshes: Vec<String>,
 }
 
 /// Main recipe function.
 fn main() {
     let config = init();
-    run(config);
+    run(load(config));
 }
 
 /// Read the input arguments.
@@ -32,11 +34,29 @@ fn init() -> Config {
     json::load(&params_path)
 }
 
+/// Load resources.
+fn load(config: Config) -> Config {
+    let meshes: Vec<_> = config
+        .meshes
+        .iter()
+        .map(|name| {
+            let path = config
+                .input_dir
+                .join("meshes")
+                .join(name)
+                .with_extension("obj");
+
+            println!("Loading mesh: {}", path.display());
+
+            ()
+        })
+        .collect();
+
+    config
+}
+
 /// Run the simulation.
 fn run(config: Config) {
-    println!("Configuration: {}", config.res[0]);
-    println!("Configuration: {}", config.res[1]);
-
     let mut image = Array::from_elem(
         (config.res[0], config.res[1]),
         LinSrgba::new(0.4, 0.6, 0.9, 0.5),
