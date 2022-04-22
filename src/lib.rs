@@ -27,4 +27,5 @@
     clippy::panic
 )]
 
+pub mod parse;
 pub mod utility;
