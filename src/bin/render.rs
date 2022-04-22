@@ -15,6 +15,11 @@ fn main() {
 
     println!("Configuration: {}", config.res[0]);
     println!("Configuration: {}", config.res[1]);
+
+    for n in 0..100 {
+        println!("Line! {}", n);
+        std::thread::sleep(std::time::Duration::from_secs(1));
+    }
 }
 
 /// Read the input arguments.
