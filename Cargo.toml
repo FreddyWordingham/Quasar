@@ -8,6 +8,7 @@ keywords = ["render", "physics", "simulation"]
 categories = ["science", "simulation"]
 
 [dependencies]
+itertools = "0.10.3"
 json5 = "0.4"
 linemux = "0.2.3"
 nalgebra = "0.30.1"

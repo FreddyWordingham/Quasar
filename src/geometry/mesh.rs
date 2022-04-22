@@ -1,5 +1,7 @@
 //! Triangle-mesh.
 
+use itertools::izip;
+
 use crate::geometry::{Cube, Triangle};
 
 /// Mesh of triangles.
@@ -21,12 +23,15 @@ impl Mesh {
         let mut mins = tris[0].centre();
         let mut maxs = mins;
         for tri in &tris {
-            for v in tri.verts {
-                for (v, (min, max)) in v.iter().zip(mins.iter_mut().zip(maxs.iter_mut())) {
-                    if *min > *v {
-                        *min = *v;
-                    } else if *max < *v {
-                        *max = *v;
+            for vert in tri.verts {
+                // for (vert, (min, max)) in vert.iter().zip(mins.iter_mut().zip(maxs.iter_mut())) {
+                for (vert, (min, max)) in
+                    izip!(vert.iter(), izip!(mins.iter_mut(), maxs.iter_mut()))
+                {
+                    if *min > *vert {
+                        *min = *vert;
+                    } else if *max < *vert {
+                        *max = *vert;
                     }
                 }
             }
