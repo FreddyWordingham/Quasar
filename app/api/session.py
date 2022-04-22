@@ -73,7 +73,9 @@ async def new(session_id: str):
         raise ValueError(f"Session: '{session_id}' already exists.")
 
     Session.data[session_id] = init_session_filesystem(session_id)
-    Session.data[session_id]["process"] = Popen(["cargo", "run", session_id])
+    Session.data[session_id]["process"] = Popen(
+        ["cargo", "run", "--bin", "server", session_id]
+    )
 
     return session_id
 
