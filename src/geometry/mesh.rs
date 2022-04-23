@@ -1,6 +1,8 @@
 //! Triangle-mesh.
 
 use itertools::izip;
+use ndarray::parallel::prelude::IntoParallelRefIterator;
+use ndarray::parallel::prelude::ParallelIterator;
 
 use crate::geometry::{Cube, Triangle};
 
@@ -10,6 +12,8 @@ pub struct Mesh {
     pub boundary: Cube,
     /// List of component triangles.
     pub tris: Vec<Triangle>,
+    /// Sum area of the mesh.
+    area: f64,
 }
 
 impl Mesh {
@@ -38,6 +42,23 @@ impl Mesh {
         }
         let boundary = Cube::new(mins, maxs);
 
-        Self { boundary, tris }
+        let area = tris.iter().map(|tri| tri.area()).sum();
+
+        Self {
+            boundary,
+            tris,
+            area,
+        }
+    }
+
+    /// Check for an intersection with a given bounding box.
+    #[inline]
+    #[must_use]
+    pub fn collides(&self, cube: &Cube) -> bool {
+        if !self.boundary.collides(cube) {
+            return false;
+        }
+
+        !self.tris.par_iter().all(|tri| !tri.collides(cube))
     }
 }
