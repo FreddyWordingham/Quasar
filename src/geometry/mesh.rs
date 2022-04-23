@@ -12,8 +12,6 @@ pub struct Mesh {
     pub boundary: Cube,
     /// List of component triangles.
     pub tris: Vec<Triangle>,
-    /// Sum area of the mesh.
-    area: f64,
 }
 
 impl Mesh {
@@ -42,13 +40,7 @@ impl Mesh {
         }
         let boundary = Cube::new(mins, maxs);
 
-        let area = tris.iter().map(|tri| tri.area()).sum();
-
-        Self {
-            boundary,
-            tris,
-            area,
-        }
+        Self { boundary, tris }
     }
 
     /// Check for an intersection with a given bounding box.
