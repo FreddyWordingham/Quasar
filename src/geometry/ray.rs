@@ -5,9 +5,9 @@ use crate::algebra::{Dir3, Pos3, Rot3, Vec3};
 /// Point and direction.
 pub struct Ray {
     /// Ray origin.
-    pos: Pos3,
+    pub pos: Pos3,
     /// Ray direction.
-    dir: Dir3,
+    pub dir: Dir3,
 }
 
 impl Ray {

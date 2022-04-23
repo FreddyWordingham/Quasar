@@ -4,7 +4,7 @@ use nalgebra;
 
 use crate::{
     algebra::{Dir3, Pos3, Vec3},
-    geometry::Cube,
+    geometry::{Cube, Ray, Side},
 };
 
 /// Triangle.
@@ -164,5 +164,73 @@ impl Triangle {
         }
 
         true
+    }
+
+    /// Determine the intersection distance along a `Ray`'s direction.
+    /// Also return the barycentric intersection coordinates.
+    #[inline]
+    #[must_use]
+    fn intersection_coors(&self, ray: &Ray) -> Option<(f64, [f64; 3])> {
+        let verts = self.verts;
+
+        let e1 = verts[1] - verts[0];
+        let e2 = verts[2] - verts[0];
+
+        let d_cross_e2 = ray.dir.cross(&e2);
+        let e1_dot_d_cross_e2 = e1.dot(&d_cross_e2);
+
+        if e1_dot_d_cross_e2.abs() <= 0.0 {
+            return None;
+        }
+
+        let inv_e1_dot_d_cross_e2 = 1.0 / e1_dot_d_cross_e2;
+        let rel_pos = ray.pos - verts[0];
+        let u = inv_e1_dot_d_cross_e2 * rel_pos.dot(&d_cross_e2);
+
+        if !(0.0..=1.0).contains(&u) {
+            return None;
+        }
+
+        let q = rel_pos.cross(&e1);
+        let v = inv_e1_dot_d_cross_e2 * ray.dir.dot(&q);
+
+        if (v < 0.0) || ((u + v) > 1.0) {
+            return None;
+        }
+
+        let dist = inv_e1_dot_d_cross_e2 * e2.dot(&q);
+
+        if dist <= 0.0 {
+            return None;
+        }
+
+        let w = 1.0 - (u + v);
+
+        Some((dist, [u, v, w]))
+    }
+
+    #[inline]
+    #[must_use]
+    pub fn hit(&self, ray: &Ray) -> bool {
+        self.intersection_coors(ray).is_some()
+    }
+
+    #[inline]
+    #[must_use]
+    pub fn dist(&self, ray: &Ray) -> Option<f64> {
+        if let Some((dist, _coors)) = self.intersection_coors(ray) {
+            return Some(dist);
+        }
+
+        None
+    }
+
+    #[inline]
+    #[must_use]
+    pub fn dist_side(&self, ray: &Ray) -> Option<(f64, Side)> {
+        self.dist(ray).map(|dist| {
+            let side = Side::new(&ray.dir, self.plane_norm);
+            (dist, side)
+        })
     }
 }
