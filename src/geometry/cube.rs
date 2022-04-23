@@ -34,6 +34,13 @@ impl Cube {
         self.maxs - self.mins
     }
 
+    /// Calculate the half-widths.
+    #[inline]
+    #[must_use]
+    pub fn half_widths(&self) -> Vec3 {
+        (self.maxs - self.mins) * 0.5
+    }
+
     /// Calculate the surface area.
     #[inline]
     #[must_use]
@@ -56,5 +63,30 @@ impl Cube {
     #[must_use]
     pub fn contains(&self, p: &Pos3) -> bool {
         p >= &self.mins && p <= &self.maxs
+    }
+
+    /// Shrink by a fraction of the side lengths.
+    /// Central position is maintained.
+    #[inline]
+    pub fn shrink(&mut self, f: f64) {
+        debug_assert!(f > 0.0);
+        debug_assert!(f < 1.0);
+
+        let delta = self.half_widths() * f;
+
+        self.mins += delta;
+        self.maxs -= delta;
+    }
+
+    /// Expand by a fraction of the side lengths.
+    /// Central position is maintained.
+    #[inline]
+    pub fn expand(&mut self, f: f64) {
+        debug_assert!(f > 0.0);
+
+        let delta = self.half_widths() * f;
+
+        self.mins -= delta;
+        self.maxs += delta;
     }
 }
