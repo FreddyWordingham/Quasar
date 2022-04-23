@@ -19,13 +19,6 @@ impl Ray {
         Self { pos, dir }
     }
 
-    /// Destruct self into components.
-    #[inline]
-    #[must_use]
-    pub const fn destruct(self) -> (Pos3, Dir3) {
-        (self.pos, self.dir)
-    }
-
     /// Move along the direction of travel a given distance.
     #[inline]
     pub fn travel(&mut self, dist: f64) {
@@ -34,7 +27,7 @@ impl Ray {
         self.pos += self.dir.as_ref() * dist;
     }
 
-    /// Rotate the photon with a given pitch and subsequent roll manoeuvre.
+    /// Rotate the photon with a given pitch and subsequent roll manoeuver.
     #[inline]
     pub fn rotate(&mut self, pitch: f64, roll: f64) {
         let arbitrary_axis = if (1.0 - self.dir.z.abs()) >= 1.0e-1 {
