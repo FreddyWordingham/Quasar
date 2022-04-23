@@ -1,10 +1,9 @@
 //! Triangle-mesh.
 
 use itertools::izip;
-use ndarray::parallel::prelude::IntoParallelRefIterator;
-use ndarray::parallel::prelude::ParallelIterator;
+use ndarray::parallel::prelude::{IntoParallelRefIterator, ParallelIterator};
 
-use crate::geometry::{Cube, Triangle};
+use crate::geometry::{Cube, Ray, Side, Triangle};
 
 /// Mesh of triangles.
 pub struct Mesh {
@@ -26,7 +25,6 @@ impl Mesh {
         let mut maxs = mins;
         for tri in &tris {
             for vert in tri.verts {
-                // for (vert, (min, max)) in vert.iter().zip(mins.iter_mut().zip(maxs.iter_mut())) {
                 for (vert, (min, max)) in
                     izip!(vert.iter(), izip!(mins.iter_mut(), maxs.iter_mut()))
                 {
@@ -51,6 +49,42 @@ impl Mesh {
             return false;
         }
 
-        !self.tris.par_iter().all(|tri| !tri.collides(cube))
+        self.tris.par_iter().any(|tri| tri.collides(cube))
+    }
+
+    #[inline]
+    #[must_use]
+    pub fn hit(&self, ray: &Ray) -> bool {
+        if !self.boundary.hit(ray) {
+            return false;
+        }
+
+        self.tris.par_iter().any(|t| t.hit(ray))
+    }
+
+    #[inline]
+    #[must_use]
+    pub fn dist(&self, ray: &Ray) -> Option<f64> {
+        if !self.boundary.hit(ray) {
+            return None;
+        }
+
+        self.tris
+            .par_iter()
+            .filter_map(|tri| tri.dist(ray))
+            .min_by(|a, b| a.partial_cmp(b).unwrap())
+    }
+
+    #[inline]
+    #[must_use]
+    pub fn dist_side(&self, ray: &Ray) -> Option<(f64, Side)> {
+        if !self.boundary.hit(ray) {
+            return None;
+        }
+
+        self.tris
+            .par_iter()
+            .filter_map(|tri| tri.dist_side(ray))
+            .min_by(|a, b| a.0.partial_cmp(&b.0).unwrap())
     }
 }

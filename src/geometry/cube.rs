@@ -1,6 +1,11 @@
 //! Axis-aligned cube.
 
-use crate::algebra::{Pos3, Vec3};
+use std::cmp::Ordering;
+
+use crate::{
+    algebra::{Dir3, Pos3, Vec3},
+    geometry::{Ray, Side},
+};
 
 /// Axis-aligned cube.
 pub struct Cube {
@@ -95,5 +100,100 @@ impl Cube {
     #[must_use]
     pub fn collides(&self, cube: &Cube) -> bool {
         self.mins <= cube.maxs && self.maxs >= cube.mins
+    }
+
+    /// Determine the intersection distances along a ray's direction.
+    #[inline]
+    #[must_use]
+    fn intersections(&self, ray: &Ray) -> (f64, f64) {
+        let t_0: Vec<_> = self
+            .mins
+            .iter()
+            .zip(ray.pos.iter().zip(ray.dir.iter()))
+            .map(|(m, (p, d))| (m - p) / d)
+            .collect();
+
+        let t_1: Vec<_> = self
+            .maxs
+            .iter()
+            .zip(ray.pos.iter().zip(ray.dir.iter()))
+            .map(|(m, (p, d))| (m - p) / d)
+            .collect();
+
+        let t_min = t_0
+            .iter()
+            .zip(t_1.iter())
+            .map(|(a, b)| a.min(*b))
+            .max_by(|a, b| {
+                if a < b {
+                    Ordering::Less
+                } else {
+                    Ordering::Greater
+                }
+            })
+            .unwrap();
+
+        let t_max = t_0
+            .iter()
+            .zip(t_1.iter())
+            .map(|(a, b)| a.max(*b))
+            .min_by(|a, b| {
+                if a < b {
+                    Ordering::Less
+                } else {
+                    Ordering::Greater
+                }
+            })
+            .unwrap();
+
+        (t_min, t_max)
+    }
+
+    #[inline]
+    #[must_use]
+    pub fn hit(&self, ray: &Ray) -> bool {
+        let (t_min, t_max) = self.intersections(ray);
+
+        !(t_max <= 0.0 || t_min > t_max)
+    }
+
+    #[inline]
+    #[must_use]
+    pub fn dist(&self, ray: &Ray) -> Option<f64> {
+        let (t_min, t_max) = self.intersections(ray);
+
+        if t_max <= 0.0 || t_min > t_max {
+            return None;
+        }
+
+        if t_min > 0.0 {
+            return Some(t_min);
+        }
+
+        Some(t_max)
+    }
+
+    #[inline]
+    #[must_use]
+    pub fn dist_side(&self, ray: &Ray) -> Option<(f64, Side)> {
+        if let Some(dist) = self.dist(ray) {
+            let hit = ray.pos + (dist * ray.dir.as_ref());
+            let relative = hit - self.centre();
+
+            let xy = relative.y / relative.x;
+            let zy = relative.z / relative.y;
+
+            let norm = Dir3::new_normalize(if (-1.0..=1.0).contains(&xy) {
+                Vec3::new(1.0_f64.copysign(relative.x), 0.0, 0.0)
+            } else if (-1.0..=1.0).contains(&zy) {
+                Vec3::new(0.0, 1.0_f64.copysign(relative.y), 0.0)
+            } else {
+                Vec3::new(0.0, 0.0, 1.0_f64.copysign(relative.z))
+            });
+
+            return Some((dist, Side::new(&ray.dir, norm)));
+        }
+
+        None
     }
 }
