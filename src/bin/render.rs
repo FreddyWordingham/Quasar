@@ -5,9 +5,11 @@ use serde::Deserialize;
 use std::path::PathBuf;
 
 use quasar::{
+    algebra::Pos3,
     args,
-    geometry::Mesh,
+    geometry::{Mesh, Ray},
     parse::{json, png, wavefront},
+    utility::ProgressBar,
 };
 
 /// Configuration object.
@@ -21,6 +23,9 @@ pub struct Config {
     pub res: [usize; 2],
     /// Mesh names to render.
     pub meshes: Vec<String>,
+
+    /// Scanning boundaries.
+    pub scan: [f64; 4],
 }
 
 /// Runtime parameters.
@@ -33,6 +38,9 @@ pub struct Parameters {
     pub res: [usize; 2],
     /// Meshes to render.
     pub meshes: Vec<Mesh>,
+
+    /// Scanning boundaries.
+    pub scan: [f64; 4],
 }
 
 /// Main recipe function.
@@ -73,6 +81,7 @@ fn load(config: Config) -> Parameters {
         output_dir: config.output_dir,
         res: config.res,
         meshes: meshes,
+        scan: config.scan,
     }
 }
 
@@ -81,12 +90,27 @@ fn load(config: Config) -> Parameters {
 fn run(config: Parameters) {
     let mut image = Array::from_elem(
         (config.res[0], config.res[1]),
-        LinSrgba::new(0.4, 0.6, 0.9, 0.5),
+        LinSrgba::new(0.0, 0.0, 0.0, 0.5),
     );
 
-    for xi in 0..100 {
-        for yi in 0..100 {
-            image[(xi, yi)] = LinSrgba::new(0.6, 0.2, 0.1, 0.5);
+    let min_x = config.scan[0];
+    let dx = (config.scan[1] - config.scan[0]) / (config.res[0] - 1) as f64;
+    let min_y = config.scan[2];
+    let dy = (config.scan[3] - config.scan[2]) / (config.res[1] - 1) as f64;
+
+    let mut pb = ProgressBar::new("Rendering", config.res[0] * config.res[1]);
+    for xi in 0..config.res[0] {
+        let x = min_x + (xi as f64 * dx);
+
+        for yi in 0..config.res[1] {
+            let y = min_y + (yi as f64 * dy);
+
+            let ray = Ray::new(Pos3::new(x, -10.0, y), nalgebra::Vector3::y_axis());
+            if config.meshes.par_iter().any(|mesh| mesh.hit(&ray)) {
+                image[(xi, yi)] = LinSrgba::new(1.0, 1.0, 1.0, 1.0);
+            }
+
+            pb.tick();
         }
     }
 
