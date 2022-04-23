@@ -90,10 +90,10 @@ impl Cube {
         self.maxs += delta;
     }
 
-    /// Check for a volume intersection.
+    /// Check for an intersection with a given bounding box.
     #[inline]
     #[must_use]
-    pub fn collide(&self, cube: &Cube) -> bool {
+    pub fn collides(&self, cube: &Cube) -> bool {
         self.mins <= cube.maxs && self.maxs >= cube.mins
     }
 }
