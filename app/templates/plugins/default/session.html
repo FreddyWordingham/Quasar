@@ -7,11 +7,6 @@
 </style>
 
 <div style="text-align-last: center">
-    <div
-        id="session-status"
-        class="spinner-grow spinner-grow-sm"
-        role="status"
-    ></div>
     Session ID: {{ session_id }}
     <button type="button" class="btn btn-danger" onclick="$session.end()">
         End
@@ -30,29 +25,4 @@
             );
         },
     };
-
-    $(document).ready(function () {
-        setInterval(function () {
-            $.ajax({
-                url: "/session/id/" + $session_id + "/status",
-                type: "post",
-                success: function (response) {
-                    if (response) {
-                        $("#session-status")
-                            .addClass("text-success")
-                            .removeClass("text-danger");
-                    } else {
-                        $("#session-status")
-                            .addClass("text-danger")
-                            .removeClass("text-success");
-                    }
-                },
-                error: function (response) {
-                    $("#session-status")
-                        .addClass("text-danger")
-                        .removeClass("text-success");
-                },
-            });
-        }, 1000);
-    });
 </script>
