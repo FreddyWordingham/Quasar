@@ -106,8 +106,24 @@ fn run(config: Parameters) {
             let y = min_y + (yi as f64 * dy);
 
             let ray = Ray::new(Pos3::new(x, -10.0, y), nalgebra::Vector3::y_axis());
-            if config.meshes.par_iter().any(|mesh| mesh.hit(&ray)) {
-                image[(xi, yi)] = LinSrgba::new(1.0, 1.0, 1.0, 1.0);
+
+            let mut min_dist = 20.0;
+            let mut min_norm = None;
+            for mesh in &config.meshes {
+                if let Some((mesh_dist, mesh_side)) = mesh.dist_side(&ray) {
+                    if mesh_dist < min_dist {
+                        min_dist = mesh_dist;
+                        min_norm = Some(mesh_side.norm().clone());
+                    }
+                }
+            }
+            if let Some(norm) = min_norm {
+                image[(xi, yi)] = LinSrgba::new(
+                    (norm.x as f32).abs(),
+                    (norm.y as f32).abs(),
+                    (norm.z as f32).abs(),
+                    1.0,
+                );
             }
 
             pb.tick();
