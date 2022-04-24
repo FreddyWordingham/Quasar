@@ -2,7 +2,6 @@ from fastapi import APIRouter, Request
 import os
 import re
 import shutil
-import signal
 
 from . import component, settings
 
