@@ -1,7 +1,5 @@
 from datetime import datetime
 from fastapi import APIRouter, Request
-from pydantic import BaseModel
-from subprocess import Popen
 import os
 import re
 import shutil
@@ -60,8 +58,8 @@ async def load(request: Request, session_id: str):
     )
 
 
-@session_route.post("/id/{session_id}/new")
-async def new(session_id: str):
+@session_route.post("/id/{session_id}/start")
+async def start(session_id: str):
     """
     Create a new session.
     """
@@ -74,24 +72,8 @@ async def new(session_id: str):
         raise ValueError(f"Session: '{session_id}' already exists.")
 
     Session.data[session_id] = init_session_filesystem(session_id)
-    Session.data[session_id]["process"] = Popen(
-        ["cargo", "run", "--bin", "server", session_id]
-    )
 
     return session_id
-
-
-@session_route.post("/id/{session_id}/status")
-async def status(session_id: str):
-    """
-    Check the running status of the session.
-    Return True if the session is running.
-    """
-
-    if Session.data[session_id]["process"].poll() is not None:
-        return False
-
-    return True
 
 
 @session_route.post("/id/{session_id}/end")
@@ -113,46 +95,8 @@ async def end(session_id: str):
     return "Success"
 
 
-class WriteCommand(BaseModel):
-    command: str
-
-
-@session_route.post("/id/{session_id}/write")
-async def write(session_id: str, write_command: WriteCommand):
-    """
-    Write a command to session input.
-    """
-
-    if session_id not in Session.data.keys():
-        raise ValueError(f"Session: '{session_id}' does not exist.")
-
-    command = re.sub("[^a-zA-Z\d:-_ #]", "", write_command.command)
-
-    with open(Session.data[session_id]["input"], "a") as file:
-        file.write(f"{command}\n")
-
-    return "Success"
-
-
-@session_route.get("/id/{session_id}/log/{log}")
-async def read_log(session_id: str, log: str):
-    """
-    Read the from the input or output log.
-    """
-
-    if session_id not in Session.data.keys():
-        raise ValueError(f"Session: '{session_id}' does not exist.")
-
-    content = ""
-    with open(Session.data[session_id][log], "r") as file:
-        content = file.read()
-
-    return content
-
-
 def init_session_filesystem(session_id: str):
     """
-    Check that the session_id is not already in use.
     Initialise the filesystem for a new session.
     Store path inforation in Session.data dictionary.
     """

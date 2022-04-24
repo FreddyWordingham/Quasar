@@ -15,25 +15,22 @@
                                 class="btn btn-secondary"
                                 onclick="location.href='https://github.com/FreddyWordingham/Quasar'"
                             >
-                                Repository
+                                Repository <i class="bi bi-github"></i>
                             </button>
                             <button
                                 class="btn btn-secondary"
                                 onclick="location.href='https://FreddyWordingham.github.io/Quasar/'"
                             >
-                                Documentation
+                                Documentation <i class="bi bi-book-fill"></i>
                             </button>
                             <button
                                 class="btn btn-secondary"
                                 onclick="location.href='/docs'"
                             >
-                                API
+                                API <i class="bi bi-motherboard-fill"></i>
                             </button>
                             <hr />
-                            <div
-                                class="input-group"
-                                style="margin-bottom: 15px"
-                            >
+                            <div class="input-group">
                                 <input
                                     id="index-session_id"
                                     type="text"
@@ -49,34 +46,25 @@
                                     Start <i class="bi bi-play-fill"></i>
                                 </button>
                             </div>
-                            {% for session_id in sessions %}
-                            <div class="input-group" style="margin-bottom: 5px">
-                                <button
-                                    class="btn btn-primary"
+                            {% if sessions %}
+                            <hr />
+                            <div class="list-group">
+                                {% for session_id in sessions %}
+                                <a
+                                    class="list-group-item list-group-item-action"
                                     onclick="location.href='/session/id/{{ session_id }}'"
                                 >
-                                    Load
-                                </button>
-                                <input
-                                    type="text"
-                                    class="form-control"
-                                    value="{{ session_id }}"
-                                    disabled
-                                />
-                                <button
-                                    class="btn btn-danger"
-                                    onclick="$index.end_session(this, '{{ session_id }}')"
-                                >
-                                    End
-                                </button>
+                                    {{ session_id }}
+                                </a>
+                                {% endfor %}
                             </div>
-                            {% endfor %}
+                            {% endif %}
                             <hr />
                             <button
                                 class="btn btn-warning"
                                 onclick="$index.clean_session_data()"
                             >
-                                Clean
+                                Clean <i class="bi bi-trash3-fill"></i>
                             </button>
                         </div>
                     </div>
@@ -98,20 +86,10 @@
         start_session: function () {
             let session_id = $("#index-session_id").val();
             $.post(
-                "/session/id/" + session_id + "/new",
+                "/session/id/" + session_id + "/start",
                 {},
                 function (session_id) {
                     window.location.replace("/session/id/" + session_id);
-                }
-            );
-        },
-
-        end_session: function (elem, session_id) {
-            $.post(
-                "/session/id/" + session_id + "/end",
-                {},
-                function (session_id) {
-                    $(elem).parent().hide();
                 }
             );
         },
