@@ -28,9 +28,10 @@ async def clean():
     """
 
     for file in os.listdir(settings.SESSIONS_DIR):
-        filepath = os.path.join(settings.SESSIONS_DIR, file)
-        if os.path.isdir(filepath):
-            shutil.rmtree(filepath)
+        if file != "example":
+            filepath = os.path.join(settings.SESSIONS_DIR, file)
+            if os.path.isdir(filepath):
+                shutil.rmtree(filepath)
 
     return "Success"
 
