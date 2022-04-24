@@ -1,0 +1,7 @@
+{
+    "input_dir": "app/static/resources",
+    "output_dir": "app/static/sessions/example",
+    "res": [1024, 1024],
+    "scan": [-5.0, 5.0, -5.0, 5.0],
+    "meshes": ["lunar_lander"]
+}
