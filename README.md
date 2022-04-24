@@ -1,5 +1,5 @@
 # Quasar
-Let there be light
+![Let there be light](/app/static/images/logo.svg)
 
 ## Quickstart
 ```command
