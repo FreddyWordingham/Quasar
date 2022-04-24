@@ -39,9 +39,10 @@
                                     type="text"
                                     class="form-control"
                                     placeholder="Session ID"
-                                    value="some_random_string"
+                                    onkeyup="$index.process_keystroke(event)"
                                 />
                                 <button
+                                    id="start_session_button"
                                     class="btn btn-primary"
                                     onclick="$index.start_session()"
                                 >
@@ -88,6 +89,12 @@
 
 <script>
     $index = {
+        process_keystroke: function (event) {
+            if (event.keyCode === 13) {
+                $("#start_session_button").click();
+            }
+        },
+
         start_session: function () {
             let session_id = $("#index-session_id").val();
             $.post(
