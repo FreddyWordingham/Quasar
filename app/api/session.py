@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Request
+from pydantic import BaseModel
 import os
 import re
 import shutil
@@ -86,6 +87,27 @@ async def clean():
             filepath = os.path.join(settings.SESSIONS_DIR, file)
             if os.path.isdir(filepath):
                 shutil.rmtree(filepath)
+
+    return "Success"
+
+
+class Render(BaseModel):
+    config: str
+
+
+@session_route.post("/id/{session_id}/render")
+async def render(session_id: str, config: Render):
+    """
+    Start a rendering simulation.
+    """
+
+    if session_id not in Session.data.keys():
+        raise ValueError(f"Session: '{session_id}' does not exist.")
+
+    with open(
+        os.path.join(Session.data[session_id]["dir"], "config.json"), "w"
+    ) as file:
+        file.write(config.config)
 
     return "Success"
 

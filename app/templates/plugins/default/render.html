@@ -1,0 +1,43 @@
+<textarea id="render-input" class="prism-live language-json fill">
+{
+    "input_dir": "app/static/resources",
+    "output_dir": "app/static/sessions/example",
+    "res": [1024, 1024],
+    "scan": [-5.0, 5.0, -2.5, 7.5],
+    "meshes": ["lunar_lander"]
+}</textarea
+>
+<hr />
+<div class="progress">
+    <div class="progress-bar" role="progressbar" style="width: 0%"></div>
+</div>
+<hr />
+<button class="btn btn-primary" onclick="$render.run()">
+    Run <i class="bi bi-play-fill"></i>
+</button>
+
+<script>
+    var $render = {
+        run: function () {
+            let config = $("#render-input").val();
+            $.ajax({
+                url: "/session/id/" + $session_id + "/render",
+                type: "post",
+                contentType: "application/json",
+                data: JSON.stringify({
+                    config: config,
+                }),
+                success: function () {
+                    $render.monitor_progress();
+                },
+                error: function (response) {
+                    alert(response);
+                },
+            });
+        },
+
+        monitor_progress: function () {
+            console.log("**begin monitoring...");
+        },
+    };
+</script>
