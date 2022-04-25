@@ -48,6 +48,12 @@
                                     $("#render-progress_bar").val(100);
                                     $("#render-run_button").show();
                                     $("#render-running_button").hide();
+
+                                    $("#display_container").append(
+                                        "<img class='display' src='/static/sessions/" +
+                                            $session_id +
+                                            "/render.png'></img>"
+                                    );
                                 } else {
                                     $("#render-progress_bar").val(response);
                                 }
