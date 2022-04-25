@@ -1,22 +1,33 @@
 <textarea id="render-input" class="prism-live language-json fill">
 {
-    "res": [1024, 1024],
+    "res": [128, 128],
     "scan": [-5.0, 5.0, -2.5, 7.5],
     "meshes": ["lunar_lander"]
 }</textarea
 >
 <hr />
-<div class="progress">
-    <div class="progress-bar" role="progressbar" style="width: 0%"></div>
-</div>
-<hr />
-<button class="btn btn-primary" onclick="$render.run()">
+<button id="render-run_button" class="btn btn-primary" onclick="$render.run()">
     Run <i class="bi bi-play-fill"></i>
 </button>
+<button
+    id="render-running_button"
+    class="btn btn-primary"
+    style="display: none"
+    disabled
+>
+    Run
+    <div class="spinner-border spinner-border-sm" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+</button>
+<progress id="render-progress_bar" value="0" max="100"></progress>
 
 <script>
     var $render = {
         run: function () {
+            $("#render-run_button").hide();
+            $("#render-running_button").show();
+
             let config = $("#render-input").val();
             $.ajax({
                 url: "/session/id/" + $session_id + "/render",
@@ -26,16 +37,28 @@
                     config: config,
                 }),
                 success: function () {
-                    $render.monitor_progress();
+                    let progress_monitor = setInterval(function () {
+                        $.get(
+                            "/session/id/" + $session_id + "/render/progress",
+                            {},
+                            function (response) {
+                                console.log(response);
+                                if (response == "FINISHED\n") {
+                                    clearInterval(progress_monitor);
+                                    $("#render-progress_bar").val(100);
+                                    $("#render-run_button").show();
+                                    $("#render-running_button").hide();
+                                } else {
+                                    $("#render-progress_bar").val(response);
+                                }
+                            }
+                        );
+                    }, 1000);
                 },
                 error: function (response) {
                     alert(response);
                 },
             });
-        },
-
-        monitor_progress: function () {
-            console.log("**begin monitoring...");
         },
     };
 </script>

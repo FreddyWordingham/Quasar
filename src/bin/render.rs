@@ -133,4 +133,5 @@ fn run(config: Parameters) {
     }
 
     png::save(image.view(), &config.output_dir.join("render.png"));
+    println!("FINISHED");
 }

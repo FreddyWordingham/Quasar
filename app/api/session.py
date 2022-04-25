@@ -140,6 +140,20 @@ async def render(session_id: str, config: Render):
     return "Success"
 
 
+@session_route.get("/id/{session_id}/render/progress")
+async def render_progress(session_id: str):
+    """
+    Get the progress of the simulation.
+    """
+
+    import subprocess
+
+    out_file = f"{settings.SESSIONS_DIR}/{session_id}/output.log"
+    line = subprocess.check_output(["tail", "-1", out_file])
+
+    return line
+
+
 def init_session_filesystem(session_id: str):
     """
     Initialise the filesystem for a new session.
