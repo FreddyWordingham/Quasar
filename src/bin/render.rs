@@ -100,7 +100,7 @@ fn run(config: Parameters) {
 
     // let mut pb = ProgressBar::new("Rendering", config.res[0] * config.res[1]);
     for xi in 0..config.res[0] {
-        println!("{}", 100.0 * xi as f64 / config.res[0] as f64);
+        println!("{:.2}%", 100.0 * xi as f64 / config.res[0] as f64);
 
         let x = min_x + (xi as f64 * dx);
 

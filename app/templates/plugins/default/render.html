@@ -9,11 +9,20 @@
 <button id="render-run_button" class="btn btn-primary" onclick="$render.run()">
     Run <i class="bi bi-play-fill"></i>
 </button>
+<div id="render-progress_bar_continer" class="progress" style="display: none">
+    <div
+        id="render-progress_bar"
+        class="progress-bar progress-bar-striped progress-bar-animated"
+        role="progressbar"
+        style="width: 0%"
+    ></div>
+</div>
 
 <script>
     var $render = {
         run: function () {
             $("#render-run_button").hide();
+            $("#render-progress_bar_continer").show();
 
             let config = $("#render-input").val();
             $.ajax({
@@ -33,6 +42,7 @@
                                 if (response == "FINISHED\n") {
                                     clearInterval(progress_monitor);
                                     $("#render-run_button").show();
+                                    $("#render-progress_bar_continer").hide();
 
                                     if ($("#render-result").length) {
                                         $("#render-result").remove();
@@ -43,6 +53,9 @@
                                             "/render.png'></img>"
                                     );
                                 } else {
+                                    $("#render-progress_bar")
+                                        .css("width", response)
+                                        .text(response);
                                 }
                             }
                         );
