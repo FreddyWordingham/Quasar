@@ -53,7 +53,9 @@
                                     $("#display_container").append(
                                         "<img id='render-result' class='display' src='/static/sessions/" +
                                             $session_id +
-                                            "/render.png'></img>"
+                                            "/render.png?" +
+                                            new Date().getTime() +
+                                            "'></img>"
                                     );
                                 } else {
                                     $("#render-progress_bar")
