@@ -9,7 +9,7 @@ use quasar::{
     args,
     geometry::{Mesh, Ray},
     parse::{json, png, wavefront},
-    utility::ProgressBar,
+    // utility::ProgressBar,
 };
 
 /// Configuration object.
@@ -98,8 +98,10 @@ fn run(config: Parameters) {
     let min_y = config.scan[2];
     let dy = (config.scan[3] - config.scan[2]) / (config.res[1] - 1) as f64;
 
-    let mut pb = ProgressBar::new("Rendering", config.res[0] * config.res[1]);
+    // let mut pb = ProgressBar::new("Rendering", config.res[0] * config.res[1]);
     for xi in 0..config.res[0] {
+        println!("{}", 100.0 * xi as f64 / config.res[0] as f64);
+
         let x = min_x + (xi as f64 * dx);
 
         for yi in 0..config.res[1] {
@@ -126,7 +128,7 @@ fn run(config: Parameters) {
                 );
             }
 
-            pb.tick();
+            // pb.tick();
         }
     }
 
