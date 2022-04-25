@@ -1,5 +1,7 @@
 from fastapi import APIRouter, Request
+import json
 from pydantic import BaseModel
+from subprocess import Popen
 import os
 import re
 import shutil
@@ -104,10 +106,27 @@ async def render(session_id: str, config: Render):
     if session_id not in Session.data.keys():
         raise ValueError(f"Session: '{session_id}' does not exist.")
 
-    with open(
-        os.path.join(Session.data[session_id]["dir"], "config.json"), "w"
-    ) as file:
-        file.write(config.config)
+    config = json.loads(config.config)
+    config["input_dir"] = "app/static/resources"
+    config["output_dir"] = f"app/static/sessions/{session_id}"
+
+    try:
+        with open(
+            os.path.join(Session.data[session_id]["dir"], "render.json"), "w"
+        ) as file:
+            file.write(json.dumps(config, indent=4))
+            Session.data[session_id]["process"] = Popen(
+                [
+                    "cargo",
+                    "run",
+                    "--bin",
+                    "render",
+                    "--release",
+                    f"{settings.SESSIONS_DIR}/{session_id}/render.json",
+                ]
+            )
+    except Exception as e:
+        return e
 
     return "Success"
 
