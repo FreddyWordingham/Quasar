@@ -5,6 +5,7 @@ from subprocess import Popen
 import os
 import re
 import shutil
+import signal
 
 from . import component, settings
 
@@ -71,6 +72,9 @@ async def end(session_id: str):
     if session_id not in Session.data.keys():
         raise ValueError(f"Session: '{session_id}' does not exist.")
 
+    if "process" in Session.data[session_id]:
+        os.kill(Session.data[session_id]["process"].pid, signal.SIGTERM)
+
     Session.data.pop(session_id)
 
     return "Success"
@@ -110,10 +114,13 @@ async def render(session_id: str, config: Render):
     config["input_dir"] = "app/static/resources"
     config["output_dir"] = f"app/static/sessions/{session_id}"
 
+    out_file = f"{settings.SESSIONS_DIR}/{session_id}/output.log"
+    err_file = f"{settings.SESSIONS_DIR}/{session_id}/error.log"
+
     try:
         with open(
             os.path.join(Session.data[session_id]["dir"], "render.json"), "w"
-        ) as file:
+        ) as file, open(out_file, "w") as out, open(err_file, "w") as err:
             file.write(json.dumps(config, indent=4))
             Session.data[session_id]["process"] = Popen(
                 [
@@ -123,7 +130,9 @@ async def render(session_id: str, config: Render):
                     "render",
                     "--release",
                     f"{settings.SESSIONS_DIR}/{session_id}/render.json",
-                ]
+                ],
+                stdout=out,
+                stderr=err,
             )
     except Exception as e:
         return e
