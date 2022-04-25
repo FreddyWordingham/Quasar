@@ -1,6 +1,6 @@
 <textarea id="render-input" class="prism-live language-json fill">
 {
-    "res": [128, 128],
+    "res": [256, 256],
     "scan": [-5.0, 5.0, -2.5, 7.5],
     "meshes": ["lunar_lander"]
 }</textarea
@@ -43,6 +43,9 @@
                                     clearInterval(progress_monitor);
                                     $("#render-run_button").show();
                                     $("#render-progress_bar_continer").hide();
+                                    $("#render-progress_bar")
+                                        .css("width", "0%")
+                                        .text("");
 
                                     if ($("#render-result").length) {
                                         $("#render-result").remove();
