@@ -9,24 +9,11 @@
 <button id="render-run_button" class="btn btn-primary" onclick="$render.run()">
     Run <i class="bi bi-play-fill"></i>
 </button>
-<button
-    id="render-running_button"
-    class="btn btn-primary"
-    style="display: none"
-    disabled
->
-    Run
-    <div class="spinner-border spinner-border-sm" role="status">
-        <span class="visually-hidden">Loading...</span>
-    </div>
-</button>
-<progress id="render-progress_bar" value="0" max="100"></progress>
 
 <script>
     var $render = {
         run: function () {
             $("#render-run_button").hide();
-            $("#render-running_button").show();
 
             let config = $("#render-input").val();
             $.ajax({
@@ -45,17 +32,17 @@
                                 console.log(response);
                                 if (response == "FINISHED\n") {
                                     clearInterval(progress_monitor);
-                                    $("#render-progress_bar").val(100);
                                     $("#render-run_button").show();
-                                    $("#render-running_button").hide();
 
+                                    if ($("#render-result").length) {
+                                        $("#render-result").remove();
+                                    }
                                     $("#display_container").append(
-                                        "<img class='display' src='/static/sessions/" +
+                                        "<img id='render-result' class='display' src='/static/sessions/" +
                                             $session_id +
                                             "/render.png'></img>"
                                     );
                                 } else {
-                                    $("#render-progress_bar").val(response);
                                 }
                             }
                         );
