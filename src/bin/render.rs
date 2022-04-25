@@ -21,9 +21,10 @@ pub struct Config {
     pub output_dir: PathBuf,
     /// Output image resolution.
     pub res: [usize; 2],
+    /// Dumps.
+    pub dumps: usize,
     /// Mesh names to render.
     pub meshes: Vec<String>,
-
     /// Scanning boundaries.
     pub scan: [f64; 4],
 }
@@ -38,7 +39,8 @@ pub struct Parameters {
     pub res: [usize; 2],
     /// Meshes to render.
     pub meshes: Vec<Mesh>,
-
+    /// Dumps.
+    pub dumps: usize,
     /// Scanning boundaries.
     pub scan: [f64; 4],
 }
@@ -80,6 +82,7 @@ fn load(config: Config) -> Parameters {
         input_dir: config.input_dir,
         output_dir: config.output_dir,
         res: config.res,
+        dumps: config.dumps,
         meshes: meshes,
         scan: config.scan,
     }
@@ -97,6 +100,9 @@ fn run(config: Parameters) {
     let dx = (config.scan[1] - config.scan[0]) / (config.res[0] - 1) as f64;
     let min_y = config.scan[2];
     let dy = (config.scan[3] - config.scan[2]) / (config.res[1] - 1) as f64;
+
+    let dump = (config.res[0] * config.res[1]) / config.dumps;
+    let mut n = 0;
 
     // let mut pb = ProgressBar::new("Rendering", config.res[0] * config.res[1]);
     for xi in 0..config.res[0] {
@@ -129,6 +135,11 @@ fn run(config: Parameters) {
             }
 
             // pb.tick();
+            if n > dump {
+                png::save(image.view(), &config.output_dir.join("render.png"));
+                n = 0;
+            }
+            n += 1;
         }
     }
 
