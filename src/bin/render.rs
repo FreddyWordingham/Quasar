@@ -5,9 +5,9 @@ use std::path::PathBuf;
 
 use quasar::{
     args,
-    parse::{json, png},
     // utility::ProgressBar,
-    world::SurfaceLoader,
+    dom::SurfaceLoader,
+    parse::{json, png},
 };
 
 /// Configuration object.

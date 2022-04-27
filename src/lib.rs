@@ -27,7 +27,7 @@
     clippy::panic
 )]
 
+pub mod dom;
 pub mod geom;
 pub mod parse;
 pub mod util;
-pub mod world;

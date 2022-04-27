@@ -1,8 +1,11 @@
 {
     "input_dir": "app/static/resources",
     "output_dir": "app/static/sessions/example",
-    "res": [256, 256],
     "dumps": 50,
+    "res": [256, 256],
     "scan": [-5.0, 5.0, -2.5, 7.5],
-    "meshes": ["lunar_lander"]
+    "surfaces": [
+        ["lunar_lander", "default"],
+        ["cube", "default"]
+    ]
 }
