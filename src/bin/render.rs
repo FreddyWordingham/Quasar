@@ -1,6 +1,7 @@
 use ndarray::Array;
 use palette::LinSrgba;
 use serde::Deserialize;
+// use std::collections::HashMap;
 use std::path::PathBuf;
 
 use quasar::{
@@ -39,6 +40,8 @@ pub struct Parameters {
     pub res: [usize; 2],
     /// Scanning boundaries.
     pub scan: [f64; 4],
+    // /// Attributes.
+    // pub attrs: HashMap<String, i32>,
 }
 
 /// Main recipe function.

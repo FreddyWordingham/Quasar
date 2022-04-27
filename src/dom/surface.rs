@@ -2,7 +2,7 @@
 
 use crate::geom::Mesh;
 
-/// Surface with properties.
+/// Three-dimension triangular mesh with attribute data.
 pub struct Surface<'a, T> {
     /// Mesh.
     pub mesh: Mesh,

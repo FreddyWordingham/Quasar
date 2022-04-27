@@ -30,4 +30,5 @@
 pub mod dom;
 pub mod geom;
 pub mod parse;
+pub mod render;
 pub mod util;
