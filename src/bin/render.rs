@@ -63,6 +63,16 @@ fn init() -> Config {
 #[inline]
 #[must_use]
 fn load(config: Config) -> Parameters {
+    let mut attribute_names = vec![];
+    for SurfaceLoader(_mesh_name, attr_name) in config.surfaces {
+        attribute_names.push(attr_name);
+    }
+    attribute_names.sort();
+    attribute_names.dedup();
+    for name in attribute_names {
+        println!("{}", name);
+    }
+
     Parameters {
         input_dir: config.input_dir,
         output_dir: config.output_dir,

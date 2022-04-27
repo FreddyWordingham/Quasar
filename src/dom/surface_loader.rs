@@ -6,7 +6,7 @@ use serde::Deserialize;
 #[derive(Deserialize)]
 pub struct SurfaceLoader(
     /// Mesh name.
-    String,
+    pub String,
     /// Attribute name.
-    String,
+    pub String,
 );
