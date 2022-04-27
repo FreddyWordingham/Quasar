@@ -3,7 +3,7 @@
 use nalgebra::{Point3, Unit, Vector3};
 use std::{fs, path::Path};
 
-use crate::geometry::{Mesh, Triangle};
+use crate::geom::{Mesh, Triangle};
 
 /// Load a mesh from a wavefront file.
 #[inline]

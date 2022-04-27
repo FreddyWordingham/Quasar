@@ -3,7 +3,7 @@
 use itertools::izip;
 use ndarray::parallel::prelude::{IntoParallelRefIterator, ParallelIterator};
 
-use crate::geometry::{Cube, Ray, Side, Triangle};
+use crate::geom::{Cube, Ray, Side, Triangle};
 
 /// Mesh of triangles.
 pub struct Mesh {

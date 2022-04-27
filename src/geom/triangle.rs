@@ -2,7 +2,7 @@
 
 use nalgebra::{Point3, Unit, Vector3};
 
-use crate::geometry::{Cube, Ray, Side};
+use crate::geom::{Cube, Ray, Side};
 
 /// Triangle.
 pub struct Triangle {

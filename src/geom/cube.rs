@@ -3,7 +3,7 @@
 use nalgebra::{Point3, Unit, Vector3};
 use std::cmp::Ordering;
 
-use crate::geometry::{Ray, Side};
+use crate::geom::{Ray, Side};
 
 /// Axis-aligned cube.
 pub struct Cube {

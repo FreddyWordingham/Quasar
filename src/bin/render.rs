@@ -7,7 +7,7 @@ use std::path::PathBuf;
 
 use quasar::{
     args,
-    geometry::{Mesh, Ray},
+    geom::{Mesh, Ray},
     parse::{json, png, wavefront},
     // utility::ProgressBar,
 };
