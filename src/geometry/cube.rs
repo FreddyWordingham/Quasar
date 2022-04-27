@@ -1,25 +1,23 @@
 //! Axis-aligned cube.
 
+use nalgebra::{Point3, Unit, Vector3};
 use std::cmp::Ordering;
 
-use crate::{
-    algebra::{Dir3, Pos3, Vec3},
-    geometry::{Ray, Side},
-};
+use crate::geometry::{Ray, Side};
 
 /// Axis-aligned cube.
 pub struct Cube {
     /// Minimum bound.
-    pub mins: Pos3,
+    pub mins: Point3<f64>,
     /// Maximum bound.
-    pub maxs: Pos3,
+    pub maxs: Point3<f64>,
 }
 
 impl Cube {
     /// Construct a new instance.
     #[inline]
     #[must_use]
-    pub fn new(mins: Pos3, maxs: Pos3) -> Self {
+    pub fn new(mins: Point3<f64>, maxs: Point3<f64>) -> Self {
         debug_assert!(mins < maxs);
 
         Self { mins, maxs }
@@ -28,21 +26,21 @@ impl Cube {
     /// Calculate the centre position.
     #[inline]
     #[must_use]
-    pub fn centre(&self) -> Pos3 {
+    pub fn centre(&self) -> Point3<f64> {
         nalgebra::center(&self.mins, &self.maxs)
     }
 
     /// Calculate the widths.
     #[inline]
     #[must_use]
-    pub fn widths(&self) -> Vec3 {
+    pub fn widths(&self) -> Vector3<f64> {
         self.maxs - self.mins
     }
 
     /// Calculate the half-widths.
     #[inline]
     #[must_use]
-    pub fn half_widths(&self) -> Vec3 {
+    pub fn half_widths(&self) -> Vector3<f64> {
         (self.maxs - self.mins) * 0.5
     }
 
@@ -66,7 +64,7 @@ impl Cube {
     /// Points lying on the surface are contained contained.
     #[inline]
     #[must_use]
-    pub fn contains(&self, p: &Pos3) -> bool {
+    pub fn contains(&self, p: &Point3<f64>) -> bool {
         p >= &self.mins && p <= &self.maxs
     }
 
@@ -183,12 +181,12 @@ impl Cube {
             let xy = relative.y / relative.x;
             let zy = relative.z / relative.y;
 
-            let norm = Dir3::new_normalize(if (-1.0..=1.0).contains(&xy) {
-                Vec3::new(1.0_f64.copysign(relative.x), 0.0, 0.0)
+            let norm = Unit::new_normalize(if (-1.0..=1.0).contains(&xy) {
+                Vector3::new(1.0_f64.copysign(relative.x), 0.0, 0.0)
             } else if (-1.0..=1.0).contains(&zy) {
-                Vec3::new(0.0, 1.0_f64.copysign(relative.y), 0.0)
+                Vector3::new(0.0, 1.0_f64.copysign(relative.y), 0.0)
             } else {
-                Vec3::new(0.0, 0.0, 1.0_f64.copysign(relative.z))
+                Vector3::new(0.0, 0.0, 1.0_f64.copysign(relative.z))
             });
 
             return Some((dist, Side::new(&ray.dir, norm)));

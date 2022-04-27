@@ -1,20 +1,20 @@
 //! Hit side.
 
-use crate::algebra::Dir3;
+use nalgebra::{Unit, Vector3};
 
 /// Side of a surface hit.
 pub enum Side {
     /// Inside of surface hit. d.dot(n) > 0.0
-    Inside(Dir3),
+    Inside(Unit<Vector3<f64>>),
     /// Outside of surface hit. d.dot(n) < 0.0
-    Outside(Dir3),
+    Outside(Unit<Vector3<f64>>),
 }
 
 impl Side {
     /// Construct a new instance.
     #[inline]
     #[must_use]
-    pub fn new(dir: &Dir3, norm: Dir3) -> Self {
+    pub fn new(dir: &Unit<Vector3<f64>>, norm: Unit<Vector3<f64>>) -> Self {
         if dir.dot(&norm) < 0.0 {
             Self::Outside(norm)
         } else {
@@ -36,7 +36,7 @@ impl Side {
     /// This points away from the constructing direction normal.
     #[inline]
     #[must_use]
-    pub const fn norm(&self) -> &Dir3 {
+    pub const fn norm(&self) -> &Unit<Vector3<f64>> {
         match *self {
             Self::Inside(ref norm) | Self::Outside(ref norm) => norm,
         }

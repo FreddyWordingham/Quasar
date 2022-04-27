@@ -1,11 +1,9 @@
 //! Wavefront.
 
+use nalgebra::{Point3, Unit, Vector3};
 use std::{fs, path::Path};
 
-use crate::{
-    algebra::{Dir3, Pos3, Vec3},
-    geometry::{Mesh, Triangle},
-};
+use crate::geometry::{Mesh, Triangle};
 
 /// Load a mesh from a wavefront file.
 #[inline]
@@ -38,7 +36,7 @@ pub fn read(s: &str) -> Mesh {
 /// Read the vertex list from wavefront string.
 #[inline]
 #[must_use]
-fn read_vertices(s: &str) -> Vec<Pos3> {
+fn read_vertices(s: &str) -> Vec<Point3<f64>> {
     let vert_lines: Vec<_> = s
         .split('\n')
         .filter(|line| line.starts_with("v "))
@@ -65,7 +63,7 @@ fn read_vertices(s: &str) -> Vec<Pos3> {
             .parse::<f64>()
             .expect("Unable to parse f64 from string.");
 
-        verts.push(Pos3::new(px, py, pz));
+        verts.push(Point3::new(px, py, pz));
     }
 
     verts
@@ -74,7 +72,7 @@ fn read_vertices(s: &str) -> Vec<Pos3> {
 /// Read the normal list from wavefront string.
 #[inline]
 #[must_use]
-fn read_normals(s: &str) -> Vec<Dir3> {
+fn read_normals(s: &str) -> Vec<Unit<Vector3<f64>>> {
     let norm_lines: Vec<_> = s
         .split('\n')
         .filter(|line| line.starts_with("vn "))
@@ -101,7 +99,7 @@ fn read_normals(s: &str) -> Vec<Dir3> {
             .parse::<f64>()
             .expect("Unable to parse f64 from string.");
 
-        norms.push(Dir3::new_normalize(Vec3::new(nx, ny, nz)));
+        norms.push(Unit::new_normalize(Vector3::new(nx, ny, nz)));
     }
 
     norms

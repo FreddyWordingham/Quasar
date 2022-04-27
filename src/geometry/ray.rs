@@ -1,20 +1,20 @@
 //! Ray.
 
-use crate::algebra::{Dir3, Pos3, Rot3, Vec3};
+use nalgebra::{Point3, Rotation3, Unit, Vector3};
 
 /// Point and direction.
 pub struct Ray {
     /// Ray origin.
-    pub pos: Pos3,
+    pub pos: Point3<f64>,
     /// Ray direction.
-    pub dir: Dir3,
+    pub dir: Unit<Vector3<f64>>,
 }
 
 impl Ray {
     /// Construct a new instance.
     #[inline]
     #[must_use]
-    pub fn new(pos: Pos3, mut dir: Dir3) -> Self {
+    pub fn new(pos: Point3<f64>, mut dir: Unit<Vector3<f64>>) -> Self {
         dir.renormalize();
         Self { pos, dir }
     }
@@ -31,15 +31,15 @@ impl Ray {
     #[inline]
     pub fn rotate(&mut self, pitch: f64, roll: f64) {
         let arbitrary_axis = if (1.0 - self.dir.z.abs()) >= 1.0e-1 {
-            Vec3::z_axis()
+            Vector3::z_axis()
         } else {
-            Vec3::y_axis()
+            Vector3::y_axis()
         };
 
-        let pitch_axis = Dir3::new_normalize(self.dir.cross(&arbitrary_axis));
-        let pitch_rot = Rot3::from_axis_angle(&pitch_axis, pitch);
+        let pitch_axis = Unit::new_normalize(self.dir.cross(&arbitrary_axis));
+        let pitch_rot = Rotation3::from_axis_angle(&pitch_axis, pitch);
 
-        let roll_rot = Rot3::from_axis_angle(&self.dir, roll);
+        let roll_rot = Rotation3::from_axis_angle(&self.dir, roll);
 
         self.dir = roll_rot * pitch_rot * self.dir;
         self.dir.renormalize();

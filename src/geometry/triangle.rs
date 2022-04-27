@@ -1,28 +1,25 @@
 //! Triangle.
 
-use nalgebra;
+use nalgebra::{Point3, Unit, Vector3};
 
-use crate::{
-    algebra::{Dir3, Pos3, Vec3},
-    geometry::{Cube, Ray, Side},
-};
+use crate::geometry::{Cube, Ray, Side};
 
 /// Triangle.
 pub struct Triangle {
     /// Vertex positions.
-    pub verts: [Pos3; 3],
+    pub verts: [Point3<f64>; 3],
     /// vertex normals.
-    pub norms: [Dir3; 3],
+    pub norms: [Unit<Vector3<f64>>; 3],
     /// Plane normal.
-    plane_norm: Dir3,
+    plane_norm: Unit<Vector3<f64>>,
 }
 
 impl Triangle {
     /// Construct a new instance.
     #[inline]
     #[must_use]
-    pub fn new(verts: [Pos3; 3], norms: [Dir3; 3]) -> Self {
-        let plane_norm = Dir3::new_normalize((verts[0] - verts[2]).cross(&(verts[1] - verts[0])));
+    pub fn new(verts: [Point3<f64>; 3], norms: [Unit<Vector3<f64>>; 3]) -> Self {
+        let plane_norm = Unit::new_normalize((verts[0] - verts[2]).cross(&(verts[1] - verts[0])));
 
         Self {
             verts,
@@ -34,8 +31,8 @@ impl Triangle {
     /// Calculate the central position.
     #[inline]
     #[must_use]
-    pub fn centre(&self) -> Pos3 {
-        Pos3::from(
+    pub fn centre(&self) -> Point3<f64> {
+        Point3::from(
             ((self.verts[0].to_homogeneous()
                 + self.verts[1].to_homogeneous()
                 + self.verts[2].to_homogeneous())
@@ -86,11 +83,11 @@ impl Triangle {
         let f1 = v2 - v1;
         let f2 = v0 - v2;
 
-        let u0 = Vec3::x_axis();
-        let u1 = Vec3::y_axis();
-        let u2 = Vec3::z_axis();
+        let u0 = Vector3::x_axis();
+        let u1 = Vector3::y_axis();
+        let u2 = Vector3::z_axis();
 
-        let axis_test = |axis: &Vec3| {
+        let axis_test = |axis: &Vector3<f64>| {
             let p0 = v0.dot(axis);
             let p1 = v1.dot(axis);
             let p2 = v2.dot(axis);

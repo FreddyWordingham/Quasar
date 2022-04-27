@@ -1,3 +1,4 @@
+use nalgebra::Point3;
 use ndarray::Array;
 use palette::LinSrgba;
 use rayon::prelude::*;
@@ -5,7 +6,6 @@ use serde::Deserialize;
 use std::path::PathBuf;
 
 use quasar::{
-    algebra::Pos3,
     args,
     geometry::{Mesh, Ray},
     parse::{json, png, wavefront},
@@ -113,7 +113,7 @@ fn run(config: Parameters) {
         for yi in 0..config.res[1] {
             let y = min_y + (yi as f64 * dy);
 
-            let ray = Ray::new(Pos3::new(x, -10.0, y), nalgebra::Vector3::y_axis());
+            let ray = Ray::new(Point3::new(x, -10.0, y), nalgebra::Vector3::y_axis());
 
             let mut min_dist = 20.0;
             let mut min_norm = None;
