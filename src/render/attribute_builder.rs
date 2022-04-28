@@ -18,3 +18,19 @@ pub enum AttributeBuilder {
     /// Switchable condition, conditional value.
     Switchable([String; 2], f64),
 }
+
+impl AttributeBuilder {
+    /// Get the names of the gradients used.
+    #[inline]
+    #[must_use]
+    pub fn colours(&self) -> Vec<String> {
+        match *self {
+            Self::Opaque(ref grad)
+            | Self::Mirror(ref grad, ..)
+            | Self::Transparent(ref grad, ..)
+            | Self::Refractive(ref grad, ..)
+            | Self::Luminous(ref grad, ..) => vec![grad.clone()],
+            Self::Switchable(ref grads, ..) => grads.clone().to_vec(),
+        }
+    }
+}

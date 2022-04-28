@@ -1,7 +1,7 @@
 use ndarray::Array;
-use palette::LinSrgba;
+use palette::{Gradient, LinSrgba};
 use serde::Deserialize;
-// use std::collections::HashMap;
+use std::collections::HashMap;
 use std::path::PathBuf;
 
 use quasar::{
@@ -9,7 +9,7 @@ use quasar::{
     // utility::ProgressBar,
     dom::SurfaceLoader,
     parse::{json, png},
-    render::AttributeBuilder,
+    render::{AttributeBuilder, GradientBuilder},
 };
 
 /// Configuration object.
@@ -41,6 +41,8 @@ pub struct Parameters {
     pub res: [usize; 2],
     /// Scanning boundaries.
     pub scan: [f64; 4],
+    /// Gradients.
+    pub grads: HashMap<String, Gradient<LinSrgba>>,
     // /// Attributes.
     // pub attrs: HashMap<String, i32>,
 }
@@ -64,22 +66,34 @@ fn init() -> Config {
 #[inline]
 #[must_use]
 fn load(config: Config) -> Parameters {
-    let mut attribute_names = Vec::new();
-    for SurfaceLoader(_mesh_name, attr_name) in config.surfaces {
-        attribute_names.push(attr_name);
-    }
+    let mut attribute_names: Vec<_> = config.surfaces.iter().map(|s| s.1.clone()).collect();
     attribute_names.sort();
     attribute_names.dedup();
-
     let mut attrs: Vec<AttributeBuilder> = Vec::new();
-    for name in attribute_names {
+    for attr_name in attribute_names {
         attrs.push(json::load(
             &config
                 .input_dir
                 .join("attributes")
-                .join(name)
+                .join(attr_name)
                 .with_extension("json"),
         ));
+    }
+
+    let mut gradient_names: Vec<_> = attrs.iter().map(|a| a.colours()).flatten().collect();
+    gradient_names.sort();
+    gradient_names.dedup();
+    let mut grads: HashMap<String, Gradient<LinSrgba>> = HashMap::new();
+    for grad_name in gradient_names.iter() {
+        let grad = json::load::<GradientBuilder>(
+            &config
+                .input_dir
+                .join("gradients")
+                .join(grad_name)
+                .with_extension("json"),
+        )
+        .build();
+        grads.entry(grad_name.clone()).or_insert(grad);
     }
 
     Parameters {
@@ -88,6 +102,7 @@ fn load(config: Config) -> Parameters {
         dumps: config.dumps,
         res: config.res,
         scan: config.scan,
+        grads: grads,
     }
 }
 
