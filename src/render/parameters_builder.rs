@@ -1,7 +1,7 @@
 //! Input configuration.
 
 use serde::Deserialize;
-use std::{collections::HashMap, path::PathBuf};
+use std::path::PathBuf;
 
 use crate::{dom::SurfaceBuilder, dom::TreeSettings, render::Parameters};
 
@@ -15,7 +15,7 @@ pub struct ParametersBuilder {
     /// Oct-tree settings.
     pub tree: TreeSettings,
     /// Surfaces.
-    pub surfs: HashMap<String, SurfaceBuilder>,
+    pub surfs: Vec<SurfaceBuilder>,
 }
 
 impl ParametersBuilder {
