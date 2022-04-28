@@ -4,7 +4,7 @@ use serde::Deserialize;
 
 /// Surface parameterisation.
 #[derive(Deserialize)]
-pub struct SurfaceLoader(
+pub struct SurfaceBuilder(
     /// Mesh name.
     pub String,
     /// Attribute name.
