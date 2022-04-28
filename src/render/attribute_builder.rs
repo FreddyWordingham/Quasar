@@ -1,6 +1,9 @@
 //! Observable attributes.
 
+use serde::Deserialize;
+
 /// Attribute builder.
+#[derive(Deserialize)]
 pub enum AttributeBuilder {
     /// Opaque coloured surface.
     Opaque(String),

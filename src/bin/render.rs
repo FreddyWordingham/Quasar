@@ -9,6 +9,7 @@ use quasar::{
     // utility::ProgressBar,
     dom::SurfaceLoader,
     parse::{json, png},
+    render::AttributeBuilder,
 };
 
 /// Configuration object.
@@ -63,14 +64,22 @@ fn init() -> Config {
 #[inline]
 #[must_use]
 fn load(config: Config) -> Parameters {
-    let mut attribute_names = vec![];
+    let mut attribute_names = Vec::new();
     for SurfaceLoader(_mesh_name, attr_name) in config.surfaces {
         attribute_names.push(attr_name);
     }
     attribute_names.sort();
     attribute_names.dedup();
+
+    let mut attrs: Vec<AttributeBuilder> = Vec::new();
     for name in attribute_names {
-        println!("{}", name);
+        attrs.push(json::load(
+            &config
+                .input_dir
+                .join("attributes")
+                .join(name)
+                .with_extension("json"),
+        ));
     }
 
     Parameters {
