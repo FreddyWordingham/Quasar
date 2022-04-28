@@ -8,7 +8,7 @@ use crate::render::Attribute;
 
 /// Attribute builder.
 #[derive(Deserialize)]
-pub enum AttributeBuilder {
+pub enum AttributeLinker {
     /// Opaque coloured surface.
     Opaque(String),
     /// Partially reflective mirror, absorption fraction.
@@ -23,7 +23,7 @@ pub enum AttributeBuilder {
     Switchable([String; 2], f64),
 }
 
-impl AttributeBuilder {
+impl AttributeLinker {
     /// Get the names of the gradients used.
     #[inline]
     #[must_use]
@@ -39,7 +39,7 @@ impl AttributeBuilder {
     }
 }
 
-impl<'a> AttributeBuilder {
+impl<'a> AttributeLinker {
     /// Link the Gradiens.
     #[inline]
     #[must_use]
