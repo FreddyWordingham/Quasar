@@ -9,7 +9,7 @@ use quasar::{
     // utility::ProgressBar,
     dom::SurfaceLoader,
     parse::{json, png},
-    render::{AttributeBuilder, GradientBuilder},
+    render::{Attribute, AttributeBuilder, GradientBuilder},
 };
 
 /// Configuration object.
@@ -50,7 +50,8 @@ pub struct Parameters {
 /// Main recipe function.
 fn main() {
     let config = init();
-    run(load(config));
+    let params = load(config);
+    run(params);
 }
 
 /// Read the input arguments.
@@ -69,9 +70,9 @@ fn load(config: Config) -> Parameters {
     let mut attribute_names: Vec<_> = config.surfaces.iter().map(|s| s.1.clone()).collect();
     attribute_names.sort();
     attribute_names.dedup();
-    let mut attrs: Vec<AttributeBuilder> = Vec::new();
+    let mut attrs_builders: Vec<AttributeBuilder> = Vec::new();
     for attr_name in attribute_names {
-        attrs.push(json::load(
+        attrs_builders.push(json::load(
             &config
                 .input_dir
                 .join("attributes")
@@ -80,7 +81,11 @@ fn load(config: Config) -> Parameters {
         ));
     }
 
-    let mut gradient_names: Vec<_> = attrs.iter().map(|a| a.colours()).flatten().collect();
+    let mut gradient_names: Vec<_> = attrs_builders
+        .iter()
+        .map(|a| a.colours())
+        .flatten()
+        .collect();
     gradient_names.sort();
     gradient_names.dedup();
     let mut grads: HashMap<String, Gradient<LinSrgba>> = HashMap::new();
@@ -95,6 +100,8 @@ fn load(config: Config) -> Parameters {
         .build();
         grads.entry(grad_name.clone()).or_insert(grad);
     }
+
+    let mut _attrs: HashMap<String, Attribute> = HashMap::new();
 
     Parameters {
         input_dir: config.input_dir,
