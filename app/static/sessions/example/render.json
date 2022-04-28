@@ -1,11 +1,10 @@
 {
-    "input_dir": "app/static/resources",
+    "_input_dir": "app/static/resources",
     "output_dir": "app/static/sessions/example",
-    "dumps": 50,
-    "res": [256, 256],
-    "scan": [-5.0, 5.0, -2.5, 7.5],
-    "surfaces": [
-        ["lunar_lander", "default"],
-        ["cube", "default"]
-    ]
+    "tree": {
+        "tar_tris": 5,
+        "max_depth": 6,
+        "padding": 0.01
+    },
+    "surfs": {}
 }
