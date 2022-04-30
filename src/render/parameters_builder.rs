@@ -3,7 +3,10 @@
 use serde::Deserialize;
 use std::path::PathBuf;
 
-use crate::{dom::SurfaceBuilder, dom::TreeSettings, render::Parameters};
+use crate::{
+    dom::{SurfaceBuilder, TreeSettings},
+    render::Parameters,
+};
 
 /// Input configuration.
 #[derive(Deserialize)]
