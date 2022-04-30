@@ -25,6 +25,6 @@ pub struct ParametersBuilder {
 
 impl ParametersBuilder {
     pub fn build(self) -> Parameters {
-        Parameters::new(self.output_dir)
+        Parameters::new(self.output_dir, self.settings)
     }
 }
