@@ -17,7 +17,7 @@ pub struct Shader<'a> {
     pub occ_dist: [f64; 2],
     /// Effect fall-off rate.
     pub fall_off: f64,
-    /// Optional number of soft shadowing samples, and angular radius (deg).
+    /// Optional number of soft shadowing samples, and angular radius (rad).
     pub soft_shadow_samples: Option<(i32, f64)>,
     /// Optional number of ambient shadowing samples and the scaling power.
     pub ambient_shadow_samples: Option<(i32, i32)>,
