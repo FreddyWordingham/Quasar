@@ -5,7 +5,7 @@ use std::path::PathBuf;
 
 use crate::{
     dom::{SurfaceBuilder, TreeSettings},
-    render::Parameters,
+    render::{Parameters, Settings},
 };
 
 /// Input configuration.
@@ -15,6 +15,8 @@ pub struct ParametersBuilder {
     _input_dir: PathBuf,
     /// Path to the output directory.
     pub output_dir: PathBuf,
+    /// Runtime settings.
+    pub settings: Settings,
     /// Oct-tree settings.
     pub tree: TreeSettings,
     /// Surfaces.
