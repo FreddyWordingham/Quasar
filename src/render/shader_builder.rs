@@ -1,12 +1,13 @@
 //! Shader settings.
 
+use nalgebra::Vector3;
 use serde::Deserialize;
 
-/// Colouring settings.
+/// Shader configuration.
 #[derive(Deserialize)]
 pub struct ShaderBuilder {
     /// Sun position (m).
-    sun_pos: [f64; 3],
+    sun_pos: Vector3<f64>,
     /// Ambient, diffuse, and occlusion lighting fractions.
     light: [f64; 3],
     /// Ambient, diffuse, and occlusion shadowing fractions.
