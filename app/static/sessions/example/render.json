@@ -1,6 +1,11 @@
 {
     "_input_dir": "app/static/resources",
     "output_dir": "app/static/sessions/example",
+    "tree": {
+        "tar_tris": 5,
+        "max_depth": 6,
+        "padding": 0.01
+    },
     "settings": {
         "num_threads": 3,
         "block_size": 1000,
@@ -19,11 +24,6 @@
         "ambient_shadow_samples": null,
         "sky_grad": "sunset",
         "data_grad": "grayscale"
-    },
-    "tree": {
-        "tar_tris": 5,
-        "max_depth": 6,
-        "padding": 0.01
     },
     "surfs": []
 }

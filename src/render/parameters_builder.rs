@@ -5,7 +5,7 @@ use std::path::PathBuf;
 
 use crate::{
     dom::{SurfaceBuilder, TreeSettings},
-    render::{Parameters, Settings, ShaderBuilder},
+    render::{CameraBuilder, Parameters, Settings, ShaderBuilder},
 };
 
 /// Input configuration.
@@ -15,12 +15,14 @@ pub struct ParametersBuilder {
     _input_dir: PathBuf,
     /// Path to the output directory.
     output_dir: PathBuf,
+    /// Oct-tree settings.
+    tree: TreeSettings,
     /// Runtime settings.
     settings: Settings,
     /// Shader settings.
     shader: ShaderBuilder,
-    /// Oct-tree settings.
-    tree: TreeSettings,
+    /// Main camera.
+    cameras: Vec<CameraBuilder>,
     /// Surfaces.
     surfs: Vec<SurfaceBuilder>,
 }
