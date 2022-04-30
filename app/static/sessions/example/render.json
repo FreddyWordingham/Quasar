@@ -8,6 +8,18 @@
         "loop_limit": 1e6,
         "min_weight": 0.01
     },
+    "shader": {
+        "sun_pos": [50.0, 75.0, 100.0],
+        "light": [0.1, 0.6, 0.3],
+        "shadow": [0.4, 0.6],
+        "spec_pow": 8,
+        "occ_dist": [2.0, 3.0],
+        "fall_off": 5.0,
+        "soft_shadow_samples": null,
+        "ambient_shadow_samples": null,
+        "sky_grad": "sunset",
+        "data_grad": "grayscale"
+    },
     "tree": {
         "tar_tris": 5,
         "max_depth": 6,
