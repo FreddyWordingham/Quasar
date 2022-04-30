@@ -27,7 +27,7 @@ impl AttributeLinker {
     /// Get the names of the gradients used.
     #[inline]
     #[must_use]
-    pub fn colours(&self) -> Vec<String> {
+    pub fn gradients(&self) -> Vec<String> {
         match *self {
             Self::Opaque(ref grad)
             | Self::Mirror(ref grad, ..)
