@@ -36,4 +36,11 @@ impl Orientation {
             up,
         }
     }
+
+    /// Construct a new instance.
+    #[inline]
+    #[must_use]
+    pub fn new_tar(pos: Point3<f64>, tar: &Point3<f64>) -> Self {
+        Self::new(Ray::new(pos, Unit::new_normalize(tar - pos)))
+    }
 }

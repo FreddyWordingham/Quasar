@@ -28,6 +28,9 @@ pub struct ParametersBuilder {
 }
 
 impl ParametersBuilder {
+    /// Construct the `Parameters`.
+    #[inline]
+    #[must_use]
     pub fn build(self) -> Parameters {
         Parameters::new(self.output_dir, self.settings)
     }

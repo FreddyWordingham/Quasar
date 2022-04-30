@@ -1,19 +1,35 @@
 //! Camera builder.
 
-use nalgebra::Vector3;
+use nalgebra::Point3;
 use serde::Deserialize;
+
+use crate::{geom::Orientation, render::Camera};
 
 /// Camera configuration.
 #[derive(Deserialize)]
 pub struct CameraBuilder {
     /// Position.
-    pos: Vector3<f64>,
+    pos: Point3<f64>,
     /// Target.
-    tar: Vector3<f64>,
+    tar: Point3<f64>,
     /// Horizontal field-of-view (deg).
     fov: f64,
     /// Image resolution.
     res: [usize; 2],
     /// Optional super-sampling power.
     ss_power: Option<usize>,
+}
+
+impl CameraBuilder {
+    /// Construct the `Camera`.
+    #[inline]
+    #[must_use]
+    fn build(self) -> Camera {
+        Camera::new(
+            Orientation::new_tar(self.pos, &self.tar),
+            self.fov.to_radians(),
+            self.res,
+            self.ss_power.map_or(1, |ss| ss),
+        )
+    }
 }
