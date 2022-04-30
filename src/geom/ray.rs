@@ -19,6 +19,13 @@ impl Ray {
         Self { pos, dir }
     }
 
+    /// Destruct self into components.
+    #[inline]
+    #[must_use]
+    pub const fn destruct(self) -> (Point3<f64>, Unit<Vector3<f64>>) {
+        (self.pos, self.dir)
+    }
+
     /// Move along the direction of travel a given distance.
     #[inline]
     pub fn travel(&mut self, dist: f64) {
