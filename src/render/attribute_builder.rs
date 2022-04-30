@@ -1,4 +1,4 @@
-//! Observable attributes.
+//! Attribute builder.
 
 use palette::{Gradient, LinSrgba};
 use serde::Deserialize;

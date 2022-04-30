@@ -1,4 +1,4 @@
-//! Camera builder structure.
+//! Camera builder.
 
 use nalgebra::Vector3;
 use serde::Deserialize;
