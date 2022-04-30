@@ -1,12 +1,12 @@
 //! Shader settings.
 
-use nalgebra::Vector3;
+use nalgebra::Point3;
 use palette::{Gradient, LinSrgba};
 
 /// Shader settings.
 pub struct Shader<'a> {
     /// Sun position (m).
-    pub sun_pos: Vector3<f64>,
+    pub sun_pos: Point3<f64>,
     /// Ambient, diffuse, and occlusion lighting fractions.
     pub light: [f64; 3],
     /// Ambient, diffuse, and occlusion shadowing fractions.
@@ -32,7 +32,7 @@ impl<'a> Shader<'a> {
     #[inline]
     #[must_use]
     pub fn new(
-        sun_pos: Vector3<f64>,
+        sun_pos: Point3<f64>,
         light: [f64; 3],
         shadow: [f64; 2],
         spec_pow: i32,

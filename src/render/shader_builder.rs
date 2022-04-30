@@ -1,6 +1,6 @@
 //! Shader settings.
 
-use nalgebra::Vector3;
+use nalgebra::Point3;
 use palette::{Gradient, LinSrgba};
 use serde::Deserialize;
 use std::collections::HashMap;
@@ -11,7 +11,7 @@ use crate::render::Shader;
 #[derive(Deserialize)]
 pub struct ShaderBuilder {
     /// Sun position (m).
-    sun_pos: Vector3<f64>,
+    sun_pos: Point3<f64>,
     /// Ambient, diffuse, and occlusion lighting fractions.
     light: [f64; 3],
     /// Ambient, diffuse, and occlusion shadowing fractions.
