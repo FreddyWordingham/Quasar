@@ -1,0 +1,167 @@
+on: [push, pull_request]
+
+name: Testing
+
+jobs:
+    build:
+        name: Build
+        runs-on: ${{ matrix.os }}
+        strategy:
+            matrix:
+                os:
+                    - ubuntu-latest
+                    - macOS-latest
+                    - windows-latest
+        steps:
+            - name: Checkout sources
+              uses: actions/checkout@v2
+
+            - name: Install stable toolchain
+              uses: actions-rs/toolchain@v1
+              with:
+                  profile: minimal
+                  toolchain: stable
+                  override: true
+
+            - name: Run cargo build
+              uses: actions-rs/cargo@v1
+              with:
+                  command: build
+
+            - name: Create artifact
+              uses: actions/upload-artifact@v3
+              with:
+                  name: target-artifact
+                  path: target/
+
+    check:
+        name: Check
+        needs: Build
+        runs-on: ${{ matrix.os }}
+        strategy:
+            matrix:
+                os:
+                    - ubuntu-latest
+                    - macOS-latest
+                    - windows-latest
+
+        steps:
+            - name: Checkout sources
+              uses: actions/checkout@v2
+
+            - uses: actions/download-artifact@v3
+              with:
+                  name: target-artifact
+
+            - name: Run cargo check
+              uses: actions-rs/cargo@v1
+              with:
+                  command: check
+
+    test:
+        name: Test
+        needs: Build
+        runs-on: ${{ matrix.os }}
+        strategy:
+            matrix:
+                os:
+                    - ubuntu-latest
+                    - macOS-latest
+                    - windows-latest
+
+        steps:
+            - name: Checkout sources
+              uses: actions/checkout@v2
+
+            - uses: actions/download-artifact@v3
+              with:
+                  name: target-artifact
+
+            - name: Run cargo test
+              uses: actions-rs/cargo@v1
+              with:
+                  command: test
+
+    lints:
+        name: Lint
+        needs: Build
+        runs-on: ${{ matrix.os }}
+        strategy:
+            matrix:
+                os:
+                    - ubuntu-latest
+                    - macOS-latest
+                    - windows-latest
+        steps:
+            - name: Checkout sources
+              uses: actions/checkout@v2
+
+            - uses: actions/download-artifact@v3
+              with:
+                  name: target-artifact
+
+            - name: Run cargo fmt
+              uses: actions-rs/cargo@v1
+              with:
+                  command: fmt
+                  args: --all -- --check
+
+            - name: Run cargo clippy
+              uses: actions-rs/cargo@v1
+              with:
+                  command: clippy
+                  args: -- -D warnings
+
+    coverage:
+        name: Coverage
+        needs: Build
+        runs-on: ${{ matrix.os }}
+        strategy:
+            matrix:
+                os:
+                    - ubuntu-latest
+                    - macOS-latest
+                    - windows-latest
+
+        steps:
+            - name: Checkout sources
+              uses: actions/checkout@v2
+
+            - name: Install toolchain
+              uses: actions-rs/toolchain@v1
+              with:
+                  toolchain: nightly
+                  override: true
+                  profile: minimal
+
+            - name: Execute tests
+              uses: actions-rs/cargo@v1
+              with:
+                  command: test
+                  args: --all
+              env:
+                  CARGO_INCREMENTAL: 0
+                  RUSTFLAGS: "-Zprofile -Ccodegen-units=1 -Cinline-threshold=0 -Coverflow-checks=off -Cpanic=abort -Zpanic_abort_tests"
+
+            - name: Gather coverage data
+              id: coverage
+              uses: actions-rs/grcov@v0.1
+              with:
+                  coveralls-token: ${{ secrets.COVERALLS_TOKEN }}
+
+            - name: Coveralls upload
+              uses: coverallsapp/github-action@master
+              with:
+                  github-token: ${{ secrets.GITHUB_TOKEN }}
+                  parallel: true
+                  path-to-lcov: ${{ steps.coverage.outputs.report }}
+
+    coverage_finalise:
+        runs-on: ubuntu-latest
+        needs: coverage
+        steps:
+            - name: Coveralls finalisation
+              uses: coverallsapp/github-action@master
+              with:
+                  github-token: ${{ secrets.GITHUB_TOKEN }}
+                  parallel-finished: true
