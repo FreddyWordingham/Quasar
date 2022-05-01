@@ -24,7 +24,7 @@ impl CameraBuilder {
     /// Construct the `Camera`.
     #[inline]
     #[must_use]
-    fn build(self) -> Camera {
+    pub fn build(self) -> Camera {
         Camera::new(
             Orientation::new_tar(self.pos, &self.tar),
             self.fov.to_radians(),
