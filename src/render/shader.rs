@@ -52,10 +52,34 @@ impl<'a> Shader<'a> {
         debug_assert!(occ_dist[0] > 0.0);
         debug_assert!(occ_dist[1] > 0.0);
         debug_assert!(fall_off > 0.0);
-        debug_assert!(soft_shadow_samples.is_none() || soft_shadow_samples.unwrap().0 > 1);
-        debug_assert!(soft_shadow_samples.is_none() || soft_shadow_samples.unwrap().1 > 0.0);
-        debug_assert!(ambient_shadow_samples.is_none() || ambient_shadow_samples.unwrap().0 > 1);
-        debug_assert!(ambient_shadow_samples.is_none() || ambient_shadow_samples.unwrap().1 > 0);
+        debug_assert!(
+            soft_shadow_samples.is_none()
+                || soft_shadow_samples
+                    .expect("Number of soft shadow samples must be greater than one.")
+                    .0
+                    > 1
+        );
+        debug_assert!(
+            soft_shadow_samples.is_none()
+                || soft_shadow_samples
+                    .expect("Soft shadow numerical aperture must be greater than zero.")
+                    .1
+                    > 0.0
+        );
+        debug_assert!(
+            ambient_shadow_samples.is_none()
+                || ambient_shadow_samples
+                    .expect("Number of ambient shadow samples must be greater than one.")
+                    .0
+                    > 1
+        );
+        debug_assert!(
+            ambient_shadow_samples.is_none()
+                || ambient_shadow_samples
+                    .expect("Ambient shadow numerical aperture must be greater than zero.")
+                    .1
+                    > 0
+        );
 
         let light_total = light[0] + light[1] + light[2];
         let shadow_total = shadow[0] + shadow[1];
