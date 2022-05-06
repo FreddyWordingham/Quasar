@@ -16,6 +16,9 @@ pub struct Parameters {
 }
 
 impl Parameters {
+    /// Construct a new instance.
+    #[inline]
+    #[must_use]
     pub fn new(output_dir: PathBuf, settings: Settings) -> Self {
         Self {
             output_dir,
@@ -23,6 +26,9 @@ impl Parameters {
         }
     }
 
+    /// Construct an instance from a file.
+    #[inline]
+    #[must_use]
     pub fn load(path: &PathBuf) -> Self {
         json::load::<ParametersBuilder>(path).build()
     }
