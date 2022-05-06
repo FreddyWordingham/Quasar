@@ -26,5 +26,5 @@
         "data_grad": "grayscale"
     },
     "_cameras": [],
-    "surfaces": []
+    "surfaces": [["lunar_lander", "default"]]
 }

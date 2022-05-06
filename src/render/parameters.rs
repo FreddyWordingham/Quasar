@@ -40,22 +40,16 @@ impl Parameters {
         let mut gradient_names = Vec::new();
 
         gradient_names.extend(self.shader.used_gradient_names());
-        gradient_names.extend(
-            &mut self
-                .used_attribute_names()
-                .iter()
-                .map(|n| {
-                    json::load::<AttributeBuilder>(
-                        &self
-                            .input_dir
-                            .join("attributes")
-                            .join(n)
-                            .with_extension("json"),
-                    )
-                    .used_gradient_names()
-                })
-                .flatten(),
-        );
+        gradient_names.extend(&mut self.used_attribute_names().iter().flat_map(|n| {
+            json::load::<AttributeBuilder>(
+                &self
+                    .input_dir
+                    .join("attributes")
+                    .join(n)
+                    .with_extension("json"),
+            )
+            .used_gradient_names()
+        }));
 
         gradient_names.sort();
         gradient_names.dedup();
