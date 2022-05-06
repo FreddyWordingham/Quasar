@@ -111,7 +111,7 @@ impl Parameters {
                     .join(name.clone())
                     .with_extension("json"),
             )
-            .build(&grads);
+            .build(grads);
             attrs.insert(name, grad);
         }
 
