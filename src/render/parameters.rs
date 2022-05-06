@@ -6,7 +6,8 @@ use std::{collections::HashMap, path::PathBuf};
 
 use crate::{
     dom::TreeSettings,
-    parse::json,
+    geom::Mesh,
+    parse::{json, wavefront},
     render::{
         Attribute, AttributeBuilder, CameraBuilder, GradientBuilder, Settings, ShaderBuilder,
         SurfaceBuilder,
@@ -73,6 +74,22 @@ impl Parameters {
         names
     }
 
+    /// Get the names of the `Meshes`s used.
+    #[inline]
+    #[must_use]
+    pub fn used_mesh_names(&self) -> Vec<String> {
+        let mut names = Vec::new();
+
+        for surf in &self.surfaces {
+            names.push(surf.0.clone());
+        }
+
+        names.sort();
+        names.dedup();
+
+        names
+    }
+
     /// Load the dictionary of `Gradients`.
     #[inline]
     #[must_use]
@@ -104,7 +121,7 @@ impl Parameters {
         let mut attrs = HashMap::new();
 
         for name in self.used_attribute_names() {
-            let grad = json::load::<AttributeBuilder>(
+            let attr = json::load::<AttributeBuilder>(
                 &self
                     .input_dir
                     .join("attributes")
@@ -112,9 +129,29 @@ impl Parameters {
                     .with_extension("json"),
             )
             .build(grads);
-            attrs.insert(name, grad);
+            attrs.insert(name, attr);
         }
 
         attrs
+    }
+
+    /// Load the dictionary of `Meshes`.
+    #[inline]
+    #[must_use]
+    pub fn load_meshes(&self) -> HashMap<String, Mesh> {
+        let mut meshes = HashMap::new();
+
+        for name in self.used_mesh_names() {
+            let mesh = wavefront::load(
+                &self
+                    .input_dir
+                    .join("meshes")
+                    .join(name.clone())
+                    .with_extension("obj"),
+            );
+            meshes.insert(name, mesh);
+        }
+
+        meshes
     }
 }

@@ -14,6 +14,10 @@ fn main() {
     let attributes = parameters.load_attributes(&gradients);
     println!("- Attributes");
     print_set(&attributes);
+
+    let meshes = parameters.load_meshes();
+    println!("- Meshes");
+    print_set(&meshes);
 }
 
 fn print_set<T>(set: &std::collections::HashMap<String, T>) {
