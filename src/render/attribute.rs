@@ -3,6 +3,7 @@
 use palette::{Gradient, LinSrgba};
 
 /// Observable attributes.
+#[non_exhaustive]
 pub enum Attribute<'a> {
     /// Opaque coloured surface.
     Opaque(&'a Gradient<LinSrgba>),

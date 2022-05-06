@@ -29,6 +29,7 @@ pub struct Shader<'a> {
 
 impl<'a> Shader<'a> {
     /// Construct a new instance.
+    #[allow(clippy::too_many_arguments, clippy::cognitive_complexity)]
     #[inline]
     #[must_use]
     pub fn new(

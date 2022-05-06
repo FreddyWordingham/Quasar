@@ -3,6 +3,7 @@
 use nalgebra::{Unit, Vector3};
 
 /// Side of a surface hit.
+#[allow(clippy::exhaustive_enums)]
 pub enum Side {
     /// Inside of surface hit. d.dot(n) > 0.0
     Inside(Unit<Vector3<f64>>),

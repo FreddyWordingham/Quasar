@@ -206,12 +206,14 @@ impl Triangle {
         Some((dist, [u, v, w]))
     }
 
+    /// Determine if a Ray-Triangle intersection occurs.
     #[inline]
     #[must_use]
     pub fn hit(&self, ray: &Ray) -> bool {
         self.intersection_coors(ray).is_some()
     }
 
+    /// Determine the distance to a Ray-Triangle intersection.
     #[inline]
     #[must_use]
     pub fn dist(&self, ray: &Ray) -> Option<f64> {
@@ -222,6 +224,7 @@ impl Triangle {
         None
     }
 
+    /// Determine the distance and facing side of a Ray-Triangle intersection.
     #[inline]
     #[must_use]
     pub fn dist_side(&self, ray: &Ray) -> Option<(f64, Side)> {

@@ -25,13 +25,11 @@ impl Mesh {
         let mut maxs = mins;
         for tri in &tris {
             for vert in tri.verts {
-                for (vert, (min, max)) in
-                    izip!(vert.iter(), izip!(mins.iter_mut(), maxs.iter_mut()))
-                {
-                    if *min > *vert {
-                        *min = *vert;
-                    } else if *max < *vert {
-                        *max = *vert;
+                for (a, (min, max)) in izip!(vert.iter(), izip!(mins.iter_mut(), maxs.iter_mut())) {
+                    if *min > *a {
+                        *min = *a;
+                    } else if *max < *a {
+                        *max = *a;
                     }
                 }
             }
@@ -52,6 +50,7 @@ impl Mesh {
         self.tris.par_iter().any(|tri| tri.collides(cube))
     }
 
+    /// Determine if a Ray-Mesh intersection occurs.
     #[inline]
     #[must_use]
     pub fn hit(&self, ray: &Ray) -> bool {
@@ -62,6 +61,7 @@ impl Mesh {
         self.tris.par_iter().any(|t| t.hit(ray))
     }
 
+    /// Determine the distance to a Ray-Mesh intersection.
     #[inline]
     #[must_use]
     pub fn dist(&self, ray: &Ray) -> Option<f64> {
@@ -72,9 +72,13 @@ impl Mesh {
         self.tris
             .par_iter()
             .filter_map(|tri| tri.dist(ray))
-            .min_by(|a, b| a.partial_cmp(b).unwrap())
+            .min_by(|a, b| {
+                a.partial_cmp(b)
+                    .expect("Failed to perform Ray-Mesh intersection")
+            })
     }
 
+    /// Determine the distance and facing side of a Ray-Mesh intersection.
     #[inline]
     #[must_use]
     pub fn dist_side(&self, ray: &Ray) -> Option<(f64, Side)> {
@@ -85,6 +89,9 @@ impl Mesh {
         self.tris
             .par_iter()
             .filter_map(|tri| tri.dist_side(ray))
-            .min_by(|a, b| a.0.partial_cmp(&b.0).unwrap())
+            .min_by(|a, b| {
+                a.0.partial_cmp(&b.0)
+                    .expect("Failed to perform Ray-Mesh intersection")
+            })
     }
 }

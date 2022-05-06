@@ -96,7 +96,7 @@ impl Cube {
     /// Check for an intersection with a given bounding box.
     #[inline]
     #[must_use]
-    pub fn collides(&self, cube: &Cube) -> bool {
+    pub fn collides(&self, cube: &Self) -> bool {
         self.mins <= cube.maxs && self.maxs >= cube.mins
     }
 
@@ -129,7 +129,7 @@ impl Cube {
                     Ordering::Greater
                 }
             })
-            .unwrap();
+            .expect("Failed to perform Ray-Cube intersection.");
 
         let t_max = t_0
             .iter()
@@ -142,11 +142,12 @@ impl Cube {
                     Ordering::Greater
                 }
             })
-            .unwrap();
+            .expect("Failed to perform Ray-Cube intersection.");
 
         (t_min, t_max)
     }
 
+    /// Determine if a Ray-Cube intersection occurs.
     #[inline]
     #[must_use]
     pub fn hit(&self, ray: &Ray) -> bool {
@@ -155,6 +156,7 @@ impl Cube {
         !(t_max <= 0.0 || t_min > t_max)
     }
 
+    /// Determine the distance to a Ray-Cube intersection.
     #[inline]
     #[must_use]
     pub fn dist(&self, ray: &Ray) -> Option<f64> {
@@ -171,6 +173,7 @@ impl Cube {
         Some(t_max)
     }
 
+    /// Determine the distance and facing side of a Ray-Cube intersection.
     #[inline]
     #[must_use]
     pub fn dist_side(&self, ray: &Ray) -> Option<(f64, Side)> {

@@ -117,8 +117,8 @@ fn read_faces(s: &str) -> Vec<((usize, usize, usize), (usize, usize, usize))> {
 
     let mut faces = Vec::with_capacity(face_lines.len());
     for line in face_lines {
-        let line = line.replace("//", " ");
-        let mut words = line.split_whitespace();
+        let split_line = line.replace("//", " ");
+        let mut words = split_line.split_whitespace();
         words.next();
 
         let fx = words

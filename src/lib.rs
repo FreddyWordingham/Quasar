@@ -10,10 +10,11 @@
 )]
 #![allow(
     clippy::as_conversions,
+    clippy::blanket_clippy_restriction_lints,
+    clippy::cargo_common_metadata,
     clippy::cast_possible_truncation,
     clippy::cast_precision_loss,
     clippy::cast_sign_loss,
-    clippy::blanket_clippy_restriction_lints,
     clippy::default_numeric_fallback,
     clippy::else_if_without_else,
     clippy::exhaustive_structs,
@@ -24,6 +25,7 @@
     clippy::integer_arithmetic,
     clippy::missing_panics_doc,
     clippy::module_name_repetitions,
+    clippy::multiple_crate_versions,
     clippy::panic
 )]
 

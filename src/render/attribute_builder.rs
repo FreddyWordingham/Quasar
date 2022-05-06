@@ -8,6 +8,7 @@ use crate::render::Attribute;
 
 /// Attribute builder.
 #[derive(Deserialize)]
+#[non_exhaustive]
 pub enum AttributeBuilder {
     /// Opaque coloured surface.
     Opaque(String),
