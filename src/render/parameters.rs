@@ -2,7 +2,10 @@
 
 use std::path::PathBuf;
 
-use crate::render::Settings;
+use crate::{
+    parse::json,
+    render::{ParametersBuilder, Settings},
+};
 
 /// Runtime data.
 pub struct Parameters {
@@ -18,5 +21,9 @@ impl Parameters {
             output_dir,
             settings,
         }
+    }
+
+    pub fn load(path: &PathBuf) -> Self {
+        json::load::<ParametersBuilder>(path).build()
     }
 }

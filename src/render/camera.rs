@@ -28,8 +28,8 @@ impl Camera {
 
         Self {
             orient,
-            half_delta_theta,
             res,
+            half_delta_theta,
             ss_power,
         }
     }
