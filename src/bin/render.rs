@@ -7,5 +7,11 @@ fn main() {
 
     let parameters = json::load::<Parameters>(&parameters_path);
 
-    let _gradients = parameters.load_gradients();
+    let gradients = parameters.load_gradients();
+    println!("- Gradients");
+    print_set(&gradients);
+}
+
+fn print_set<T>(set: &std::collections::HashMap<String, T>) {
+    set.keys().map(|k| println!("[{}]", k)).collect::<()>()
 }
