@@ -10,6 +10,10 @@ fn main() {
     let gradients = parameters.load_gradients();
     println!("- Gradients");
     print_set(&gradients);
+
+    let attributes = parameters.load_attributes(&gradients);
+    println!("- Attributes");
+    print_set(&attributes);
 }
 
 fn print_set<T>(set: &std::collections::HashMap<String, T>) {
