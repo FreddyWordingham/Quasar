@@ -11,7 +11,7 @@ pub struct Camera {
     /// Super sampling power.
     pub ss_power: usize,
     /// Rotation delta.
-    half_delta_theta: f64,
+    _half_delta_theta: f64,
 }
 
 impl Camera {
@@ -29,7 +29,7 @@ impl Camera {
         Self {
             orient,
             res,
-            half_delta_theta,
+            _half_delta_theta: half_delta_theta,
             ss_power,
         }
     }

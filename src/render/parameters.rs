@@ -12,17 +12,17 @@ use crate::{
 #[derive(Deserialize)]
 pub struct Parameters {
     /// Path to the top level resource directory.
-    input_dir: PathBuf,
+    _input_dir: PathBuf,
     /// Path to the output directory.
-    output_dir: PathBuf,
+    _output_dir: PathBuf,
     /// Oct-tree settings.
-    tree: TreeSettings,
+    _tree: TreeSettings,
     /// Runtime settings.
-    settings: Settings,
+    _settings: Settings,
     /// Shader settings.
-    shader: ShaderBuilder,
+    _shader: ShaderBuilder,
     /// Main camera.
-    cameras: Vec<CameraBuilder>,
+    _cameras: Vec<CameraBuilder>,
     /// Surfaces.
-    surfaces: Vec<SurfaceBuilder>,
+    _surfaces: Vec<SurfaceBuilder>,
 }
