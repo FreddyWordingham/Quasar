@@ -1,7 +1,9 @@
 //! Gradient builder.
 
+use crate::parse::json;
 use palette::{Gradient, LinSrgba};
 use serde::Deserialize;
+use std::path::PathBuf;
 
 /// Colour gradient.
 #[derive(Deserialize)]
@@ -11,6 +13,13 @@ pub struct GradientBuilder(
 );
 
 impl GradientBuilder {
+    /// Load an instance from a file.
+    #[inline]
+    #[must_use]
+    pub fn load(path: &PathBuf) -> Self {
+        json::load(path)
+    }
+
     /// Build the colour gradient instance.
     #[inline]
     #[must_use]

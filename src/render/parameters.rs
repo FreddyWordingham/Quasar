@@ -1,35 +1,72 @@
-//! Render program runtime parameters.
+//! Input configuration.
 
-use std::path::PathBuf;
+use crate::parse::json;
+use palette::{Gradient, LinSrgba};
+use serde::Deserialize;
+use std::{collections::HashMap, path::PathBuf};
 
 use crate::{
-    parse::json,
-    render::{ParametersBuilder, Settings},
+    dom::TreeSettings,
+    render::{CameraBuilder, GradientBuilder, Settings, ShaderBuilder, SurfaceBuilder},
 };
 
-/// Runtime data.
+/// Input configuration.
+#[derive(Deserialize)]
 pub struct Parameters {
+    /// Path to the top level resource directory.
+    input_dir: PathBuf,
     /// Path to the output directory.
-    pub output_dir: PathBuf,
+    output_dir: PathBuf,
+    /// Oct-tree settings.
+    tree: TreeSettings,
     /// Runtime settings.
-    pub settings: Settings,
+    settings: Settings,
+    /// Shader settings.
+    shader: ShaderBuilder,
+    /// Main camera.
+    cameras: Vec<CameraBuilder>,
+    /// Surfaces.
+    surfaces: Vec<SurfaceBuilder>,
 }
 
 impl Parameters {
-    /// Construct a new instance.
-    #[inline]
-    #[must_use]
-    pub fn new(output_dir: PathBuf, settings: Settings) -> Self {
-        Self {
-            output_dir,
-            settings,
-        }
-    }
-
-    /// Construct an instance from a file.
+    /// Load an instance from a file.
     #[inline]
     #[must_use]
     pub fn load(path: &PathBuf) -> Self {
-        json::load::<ParametersBuilder>(path).build()
+        json::load(path)
+    }
+
+    /// Load the gradients.
+    #[inline]
+    #[must_use]
+    pub fn load_gradients(&self) -> HashMap<String, Gradient<LinSrgba>> {
+        let mut gradient_names = Vec::new();
+        gradient_names.append(&mut self.shader.used_gradient_names());
+        // gradient_names.append(
+        //     &mut self
+        //         .surfaces
+        //         .iter()
+        //         .map(|s| s.used_gradient_names())
+        //         .collect()
+        //         .flatten(),
+        // );
+
+        let mut gradients = HashMap::with_capacity(gradient_names.len());
+        for name in gradient_names {
+            let gradient = GradientBuilder::load(
+                &self
+                    .input_dir
+                    .join("gradients")
+                    .join(&name)
+                    .with_extension("json"),
+            )
+            .build();
+
+            println!("Loaded: {}", &name);
+            gradients.insert(name, gradient);
+        }
+
+        gradients
     }
 }

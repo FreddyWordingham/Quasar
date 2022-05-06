@@ -1,5 +1,5 @@
 {
-    "_input_dir": "app/static/resources",
+    "input_dir": "app/static/resources",
     "output_dir": "app/static/sessions/example",
     "tree": {
         "tar_tris": 5,
@@ -26,5 +26,5 @@
         "data_grad": "grayscale"
     },
     "cameras": [],
-    "surfs": []
+    "surfaces": []
 }

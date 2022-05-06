@@ -36,7 +36,7 @@ impl ShaderBuilder {
     /// Get the names of the gradients used.
     #[inline]
     #[must_use]
-    pub fn gradients(&self) -> Vec<String> {
+    pub fn used_gradient_names(&self) -> Vec<String> {
         vec![self.sky_grad.clone(), self.data_grad.clone()]
     }
 }

@@ -1,8 +1,11 @@
-use quasar::{args, parse::json, render::Parameters};
+use quasar::{args, render::Parameters};
 use std::path::PathBuf;
 
 /// Main recipe function.
 fn main() {
-    args!(_bin_path: PathBuf, params_path: PathBuf);
-    let _params = Parameters::load(&params_path);
+    args!(_bin_path: PathBuf, parameters_path: PathBuf);
+
+    let parameters = Parameters::load(&parameters_path);
+
+    let _gradients = parameters.load_gradients();
 }
