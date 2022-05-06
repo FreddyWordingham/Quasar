@@ -25,7 +25,7 @@ pub enum AttributeBuilder {
 }
 
 impl AttributeBuilder {
-    /// Get the names of the gradients used.
+    /// Get the names of the `Gradient`s used.
     #[inline]
     #[must_use]
     pub fn used_gradient_names(&self) -> Vec<String> {

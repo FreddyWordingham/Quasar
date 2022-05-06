@@ -1,5 +1,5 @@
 {
-    "_input_dir": "app/static/resources",
+    "input_dir": "app/static/resources",
     "_output_dir": "app/static/sessions/example",
     "_tree": {
         "tar_tris": 5,
@@ -13,7 +13,7 @@
         "loop_limit": 1e6,
         "min_weight": 0.01
     },
-    "_shader": {
+    "shader": {
         "sun_pos": [50.0, 75.0, 100.0],
         "light": [0.1, 0.6, 0.3],
         "shadow": [0.4, 0.6],
@@ -26,5 +26,5 @@
         "data_grad": "grayscale"
     },
     "_cameras": [],
-    "_surfaces": []
+    "surfaces": []
 }

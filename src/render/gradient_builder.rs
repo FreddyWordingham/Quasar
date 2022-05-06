@@ -18,7 +18,7 @@ impl GradientBuilder {
         let mut cols = Vec::with_capacity(self.0.len());
 
         for col in self.0 {
-            let col_arr = hex::decode(col.replace("#", ""))
+            let col_arr = hex::decode(col.replace('#', ""))
                 .unwrap_or_else(|_| panic!("Failed to parse hexadecimal string: {}.", col));
 
             let r = f32::from(col_arr[0]) / 255.0;

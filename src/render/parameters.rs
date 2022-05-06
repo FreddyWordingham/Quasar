@@ -1,18 +1,22 @@
 //! Input configuration.
 
+use palette::{Gradient, LinSrgba};
 use serde::Deserialize;
-use std::path::PathBuf;
+use std::{collections::HashMap, path::PathBuf};
 
 use crate::{
     dom::TreeSettings,
-    render::{CameraBuilder, Settings, ShaderBuilder, SurfaceBuilder},
+    parse::json,
+    render::{
+        AttributeBuilder, CameraBuilder, GradientBuilder, Settings, ShaderBuilder, SurfaceBuilder,
+    },
 };
 
 /// Input configuration.
 #[derive(Deserialize)]
 pub struct Parameters {
     /// Path to the top level resource directory.
-    _input_dir: PathBuf,
+    input_dir: PathBuf,
     /// Path to the output directory.
     _output_dir: PathBuf,
     /// Oct-tree settings.
@@ -20,9 +24,74 @@ pub struct Parameters {
     /// Runtime settings.
     _settings: Settings,
     /// Shader settings.
-    _shader: ShaderBuilder,
+    shader: ShaderBuilder,
     /// Main camera.
     _cameras: Vec<CameraBuilder>,
     /// Surfaces.
-    _surfaces: Vec<SurfaceBuilder>,
+    surfaces: Vec<SurfaceBuilder>,
+}
+
+impl Parameters {
+    /// Get the names of the `Attribute`s used.
+    #[inline]
+    #[must_use]
+    pub fn used_attribute_names(&self) -> Vec<String> {
+        let mut names = Vec::new();
+        for surf in &self.surfaces {
+            names.push(surf.1.clone());
+        }
+        names.sort();
+        names.dedup();
+
+        names
+    }
+
+    /// Get the names of the `Gradient`s used.
+    #[inline]
+    #[must_use]
+    pub fn used_gradient_names(&self) -> Vec<String> {
+        let mut gradient_names = Vec::new();
+
+        gradient_names.extend(self.shader.used_gradient_names());
+        gradient_names.extend(
+            &mut self
+                .used_attribute_names()
+                .iter()
+                .map(|n| {
+                    json::load::<AttributeBuilder>(
+                        &self
+                            .input_dir
+                            .join("attributes")
+                            .join(n)
+                            .with_extension("json"),
+                    )
+                    .used_gradient_names()
+                })
+                .flatten(),
+        );
+
+        gradient_names.sort();
+        gradient_names.dedup();
+
+        gradient_names
+    }
+
+    /// Load the dictionary of `Gradients`.
+    #[inline]
+    #[must_use]
+    pub fn load_gradients(&self) -> HashMap<String, Gradient<LinSrgba>> {
+        let mut grads = HashMap::new();
+        for name in self.used_gradient_names() {
+            let grad = json::load::<GradientBuilder>(
+                &self
+                    .input_dir
+                    .join("gradients")
+                    .join(name.clone())
+                    .with_extension("json"),
+            )
+            .build();
+            grads.insert(name, grad);
+        }
+        grads
+    }
 }
