@@ -9,6 +9,7 @@
     clippy::restriction
 )]
 #![allow(
+    unknown_lints,
     clippy::as_conversions,
     clippy::blanket_clippy_restriction_lints,
     clippy::cargo_common_metadata,
@@ -26,7 +27,9 @@
     clippy::missing_panics_doc,
     clippy::module_name_repetitions,
     clippy::multiple_crate_versions,
-    clippy::panic
+    clippy::panic,
+    clippy::separated_literal_suffix,
+    clippy::single_char_lifetime_names
 )]
 
 pub mod dom;
