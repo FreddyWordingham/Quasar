@@ -9,3 +9,12 @@ pub struct Surface<'a, T> {
     /// Attribute.
     pub attr: &'a T,
 }
+
+impl<'a, T> Surface<'a, T> {
+    /// Construct a new instance.
+    #[inline]
+    #[must_use]
+    pub fn new(mesh: Mesh, attr: &'a T) -> Self {
+        Self { mesh, attr }
+    }
+}

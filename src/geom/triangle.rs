@@ -5,6 +5,7 @@ use nalgebra::{Point3, Unit, Vector3};
 use crate::geom::{Cube, Ray, Side};
 
 /// Triangle.
+#[derive(Clone)]
 pub struct Triangle {
     /// Vertex positions.
     pub verts: [Point3<f64>; 3],

@@ -6,6 +6,7 @@ use ndarray::parallel::prelude::{IntoParallelRefIterator, ParallelIterator};
 use crate::geom::{Cube, Ray, Side, Triangle};
 
 /// Mesh of triangles.
+#[derive(Clone)]
 pub struct Mesh {
     /// Bounding box.
     pub boundary: Cube,

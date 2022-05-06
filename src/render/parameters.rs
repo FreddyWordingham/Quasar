@@ -10,7 +10,7 @@ use crate::{
     parse::{json, wavefront},
     render::{
         Attribute, AttributeBuilder, CameraBuilder, GradientBuilder, Settings, ShaderBuilder,
-        SurfaceBuilder,
+        Surface, SurfaceBuilder,
     },
 };
 
@@ -153,5 +153,19 @@ impl Parameters {
         }
 
         meshes
+    }
+
+    /// Load the dictionary of `Surfaces`.
+    #[inline]
+    #[must_use]
+    pub fn load_surfaces<'a>(
+        &self,
+        meshes: &HashMap<String, Mesh>,
+        attributes: &'a HashMap<String, Attribute>,
+    ) -> Vec<Surface<Attribute<'a>>> {
+        self.surfaces
+            .iter()
+            .map(|s| s.clone().build(meshes, attributes))
+            .collect()
     }
 }

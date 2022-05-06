@@ -6,6 +6,7 @@ use std::cmp::Ordering;
 use crate::geom::{Ray, Side};
 
 /// Axis-aligned cube.
+#[derive(Clone)]
 pub struct Cube {
     /// Minimum bound.
     pub mins: Point3<f64>,
