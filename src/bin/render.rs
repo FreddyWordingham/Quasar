@@ -4,6 +4,7 @@ use quasar::{
     parse::json,
     render::{Camera, Data, Input, Parameters},
     rt::Ray,
+    util::ProgressBar,
 };
 use std::{fs, path::PathBuf};
 
@@ -41,13 +42,16 @@ fn render<T>(output_dir: &PathBuf, input: &Input<T>, camera: &Camera) {
     let divisions = [5, 7];
     let tile_res = [camera.res[0] / divisions[0], camera.res[1] / divisions[1]];
 
+    let mut pb = ProgressBar::new("Rendering", divisions[0] * divisions[1]);
     for dx in 0..divisions[0] {
         for dy in 0..divisions[1] {
             let offset = [tile_res[0] * dx, tile_res[1] * dy];
             let data = render_tile(input, camera, offset, tile_res);
             data.save(output_dir, &format!("_{}_{}", dx, dy));
+            pb.tick();
         }
     }
+    pb.finish_with_message("Rendering complete.");
 }
 
 /// Render a sub-tile.
