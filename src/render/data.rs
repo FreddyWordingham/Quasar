@@ -24,10 +24,12 @@ impl Data {
 
     /// Save the output, in it's current state, to the given output directory.
     #[inline]
-    pub fn save(&self, output_dir: &Path) {
+    pub fn save(&self, output_dir: &Path, tag: &String) {
         png::save(
             self.colour.view(),
-            &output_dir.join("colour").with_extension("png"),
+            &output_dir
+                .join(&format!("colour{}", tag))
+                .with_extension("png"),
         );
     }
 }

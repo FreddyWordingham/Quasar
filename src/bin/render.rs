@@ -1,10 +1,9 @@
 use palette::LinSrgba;
 use quasar::{
     args,
-    dom::Tree,
     parse::json,
-    render::{Camera, Data, Parameters, Settings, Shader},
-    util::ProgressBar,
+    render::{Camera, Data, Input, Parameters},
+    rt::Ray,
 };
 use std::{fs, path::PathBuf};
 
@@ -22,54 +21,82 @@ fn main() {
     let shader = parameters.build_shader(&gradients);
     let cameras = parameters.build_cameras();
 
+    // Create runtime object.
+    let runtime = Input::new(settings, shader, tree);
+
     // Run
     for (name, cam) in cameras {
         let output_dir = parameters.output_dir.join(name.clone());
+        if output_dir.exists() {
+            fs::remove_dir_all(&output_dir).expect("Failed to initialise output directory.");
+        }
         fs::create_dir(&output_dir).expect("Failed to create output directory.");
-
-        let data = run(&output_dir, &settings, &tree, &shader, &cam);
-        data.save(&output_dir);
+        render(&output_dir, &runtime, &cam);
     }
 }
 
-/// Run a simulation.
+/// Perform the rendering.
 #[inline]
-#[must_use]
-pub fn run<T>(
-    _output_dir: &PathBuf,
-    settings: &Settings,
-    tree: &Tree<T>,
-    _shader: &Shader,
-    camera: &Camera,
-) -> Data {
-    let mut data = Data::new(camera.res);
+fn render<T>(output_dir: &PathBuf, input: &Input<T>, camera: &Camera) {
+    let divisions = [5, 7];
+    let tile_res = [camera.res[0] / divisions[0], camera.res[1] / divisions[1]];
 
-    let k = 1.0 / (camera.ss_power * camera.ss_power) as f32;
-
-    let mut pb = ProgressBar::new("Rendering", camera.res[0] * camera.res[1]);
-    for px in 0..camera.res[0] {
-        for py in 0..camera.res[1] {
-            for ssx in 0..camera.ss_power {
-                for ssy in 0..camera.ss_power {
-                    let ray = camera.emit([px, py], [ssx, ssy]);
-                    if let Some(hit) = tree.scan(ray, settings.bump_dist, 200.0) {
-                        // let d = hit.dist.min(20.0) / 20.0;
-                        // image[(px, py)] = shader.data_grad.get(d as f32);
-
-                        let n = hit.side.norm();
-                        let r = n.x.abs() as f32;
-                        let g = n.y.abs() as f32;
-                        let b = n.z.abs() as f32;
-
-                        data.colour[(px, py)] += LinSrgba::new(r, g, b, 1.0) * k;
-                    }
-                }
-            }
-
-            pb.tick();
+    for dx in 0..divisions[0] {
+        for dy in 0..divisions[1] {
+            let offset = [tile_res[0] * dx, tile_res[1] * dy];
+            let data = render_tile(input, camera, offset, tile_res);
+            data.save(output_dir, &format!("_{}_{}", dx, dy));
         }
     }
-    pb.finish_with_message("Rendered.");
+}
+
+/// Render a sub-tile.
+#[inline]
+#[must_use]
+fn render_tile<T>(
+    input: &Input<T>,
+    camera: &Camera,
+    offset: [usize; 2],
+    sub_res: [usize; 2],
+) -> Data {
+    let mut data = Data::new(sub_res);
+
+    let weight = 1.0 / (camera.ss_power * camera.ss_power) as f32;
+
+    for px in 0..sub_res[0] {
+        for py in 0..sub_res[1] {
+            let rx = offset[0] + px;
+            let ry = offset[1] + py;
+
+            for ssx in 0..camera.ss_power {
+                for ssy in 0..camera.ss_power {
+                    let ray = camera.emit([rx, ry], [ssx, ssy]);
+                    sample(input, ray, weight, [px, py], &mut data)
+                }
+            }
+        }
+    }
 
     data
+}
+
+/// Sample the scene.
+#[inline]
+#[must_use]
+fn sample<T>(input: &Input<T>, ray: Ray, weight: f32, pixel: [usize; 2], data: &mut Data) {
+    let settings = &input.settings;
+    let tree = &input.tree;
+    let _shader = &input.shader;
+
+    if let Some(hit) = tree.scan(ray, settings.bump_dist, 200.0) {
+        // let d = hit.dist.min(20.0) / 20.0;
+        // image[(px, py)] = shader.data_grad.get(d as f32);
+
+        let n = hit.side.norm();
+        let r = n.x.abs() as f32;
+        let g = n.y.abs() as f32;
+        let b = n.z.abs() as f32;
+
+        data.colour[pixel] += LinSrgba::new(r, g, b, 1.0) * weight;
+    }
 }
