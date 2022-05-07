@@ -9,8 +9,8 @@ use crate::{
     geom::Mesh,
     parse::{json, wavefront},
     render::{
-        Attribute, AttributeBuilder, CameraBuilder, GradientBuilder, Settings, ShaderBuilder,
-        Surface, SurfaceBuilder,
+        Attribute, AttributeBuilder, CameraBuilder, GradientBuilder, Settings, Shader,
+        ShaderBuilder, Surface, SurfaceBuilder,
     },
 };
 
@@ -155,7 +155,7 @@ impl Parameters {
         meshes
     }
 
-    /// Load the dictionary of `Surfaces`.
+    /// Load the `Surface`s.
     #[inline]
     #[must_use]
     pub fn load_surfaces<'a>(
@@ -167,5 +167,12 @@ impl Parameters {
             .iter()
             .map(|s| s.clone().build(meshes, attributes))
             .collect()
+    }
+
+    /// Build the `Shader`.
+    #[inline]
+    #[must_use]
+    pub fn build_shader<'a>(&self, grads: &'a HashMap<String, Gradient<LinSrgba>>) -> Shader<'a> {
+        self.shader.build(grads)
     }
 }

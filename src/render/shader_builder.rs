@@ -45,7 +45,7 @@ impl<'a> ShaderBuilder {
     /// Build the `Shader`.
     #[inline]
     #[must_use]
-    pub fn build(self, grads: &'a HashMap<String, Gradient<LinSrgba>>) -> Shader<'a> {
+    pub fn build(&self, grads: &'a HashMap<String, Gradient<LinSrgba>>) -> Shader<'a> {
         let soft_shadow_samples = if let Some((n, alpha)) = self.soft_shadow_samples {
             Some((n, alpha.to_radians()))
         } else {
