@@ -1,10 +1,5 @@
 <textarea id="render-input" class="prism-live language-json fill">
-{
-    "res": [256, 256],
-    "dumps": 32,
-    "scan": [-5.0, 5.0, -2.5, 7.5],
-    "meshes": ["lunar_lander"]
-}</textarea
+{...}</textarea
 >
 <hr />
 <button id="render-run_button" class="btn btn-primary" onclick="$render.run()">
@@ -75,6 +70,15 @@
     };
 
     $(document).ready(function () {
+        $.ajax({
+            url: "/example_input",
+            type: "get",
+            contentType: "application/json",
+            success: function (response) {
+                $("#render-input").text(response);
+            },
+        });
+
         $("#display_container").append(
             "<img id='render-result' class='display'></img>"
         );

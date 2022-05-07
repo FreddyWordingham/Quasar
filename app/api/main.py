@@ -1,10 +1,12 @@
 from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
+import os
 
 from . import settings
 from .component import component_route
 from .session import Session, session_route
+
 
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="app/static"), name="static")
@@ -21,3 +23,12 @@ async def homepage(request: Request):
     return settings.TEMPLATES.TemplateResponse(
         "index.html", {"request": request, "sessions": Session.data.keys()}
     )
+
+
+@app.get("/example_input")
+async def example_input():
+    """
+    Get example input string.
+    """
+
+    return open(os.path.join(settings.SESSIONS_DIR, "example", "render.json")).read()
