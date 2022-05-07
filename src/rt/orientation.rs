@@ -43,4 +43,67 @@ impl Orientation {
     pub fn new_tar(pos: Point3<f64>, tar: &Point3<f64>) -> Self {
         Self::new(Ray::new(pos, Unit::new_normalize(tar - pos)))
     }
+
+    /// Reference the backward direction.
+    #[inline]
+    #[must_use]
+    pub fn back(&self) -> Unit<Vector3<f64>> {
+        -self.forward
+    }
+
+    /// Reference the left direction.
+    #[inline]
+    #[must_use]
+    pub fn left(&self) -> Unit<Vector3<f64>> {
+        -self.right
+    }
+
+    /// Reference the downward direction.
+    #[inline]
+    #[must_use]
+    pub fn down(&self) -> Unit<Vector3<f64>> {
+        -self.up
+    }
+
+    /// Create a forward ray.
+    #[inline]
+    #[must_use]
+    pub fn forward_ray(&self) -> Ray {
+        Ray::new(self.pos, self.forward)
+    }
+
+    /// Create a backward ray.
+    #[inline]
+    #[must_use]
+    pub fn backward_ray(&self) -> Ray {
+        Ray::new(self.pos, -self.forward)
+    }
+
+    /// Create a upward ray.
+    #[inline]
+    #[must_use]
+    pub fn up_ray(&self) -> Ray {
+        Ray::new(self.pos, self.up)
+    }
+
+    /// Create a downward ray.
+    #[inline]
+    #[must_use]
+    pub fn down_ray(&self) -> Ray {
+        Ray::new(self.pos, -self.up)
+    }
+
+    /// Create a right ray.
+    #[inline]
+    #[must_use]
+    pub fn right_ray(&self) -> Ray {
+        Ray::new(self.pos, self.right)
+    }
+
+    /// Create a left ray.
+    #[inline]
+    #[must_use]
+    pub fn left_ray(&self) -> Ray {
+        Ray::new(self.pos, -self.right)
+    }
 }

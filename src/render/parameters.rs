@@ -20,7 +20,7 @@ pub struct Parameters {
     /// Path to the top level resource directory.
     input_dir: PathBuf,
     /// Path to the output directory.
-    _output_dir: PathBuf,
+    pub output_dir: PathBuf,
     /// Oct-tree settings.
     tree: TreeBuilder,
     /// Runtime settings.
