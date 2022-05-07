@@ -7,12 +7,12 @@ use std::path::Path;
 use crate::parse::png;
 
 /// Saveable output data.
-pub struct Data {
+pub struct Output {
     /// Colour data.
     pub colour: Array2<LinSrgba>,
 }
 
-impl Data {
+impl Output {
     /// Construct a new instance.
     #[inline]
     #[must_use]

@@ -2,7 +2,7 @@ use palette::LinSrgba;
 use quasar::{
     args,
     parse::json,
-    render::{Camera, Data, Input, Parameters},
+    render::{Camera, Input, Output, Parameters},
     rt::Ray,
     util::ProgressBar,
 };
@@ -65,8 +65,8 @@ fn render_tile<T>(
     camera: &Camera,
     offset: [usize; 2],
     sub_res: [usize; 2],
-) -> Data {
-    let mut data = Data::new(sub_res);
+) -> Output {
+    let mut data = Output::new(sub_res);
 
     let weight = 1.0 / (camera.ss_power * camera.ss_power) as f32;
 
@@ -89,7 +89,7 @@ fn render_tile<T>(
 
 /// Sample the scene.
 #[inline]
-fn sample<T>(input: &Input<T>, ray: Ray, weight: f32, pixel: [usize; 2], data: &mut Data) {
+fn sample<T>(input: &Input<T>, ray: Ray, weight: f32, pixel: [usize; 2], data: &mut Output) {
     let settings = &input.settings;
     let tree = &input.tree;
     let _shader = &input.shader;

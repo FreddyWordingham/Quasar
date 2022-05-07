@@ -4,9 +4,9 @@ pub mod attribute;
 pub mod attribute_builder;
 pub mod camera;
 pub mod camera_builder;
-pub mod data;
 pub mod gradient_builder;
 pub mod input;
+pub mod output;
 pub mod parameters;
 pub mod settings;
 pub mod shader;
@@ -15,7 +15,7 @@ pub mod surface;
 pub mod surface_builder;
 
 pub use self::{
-    attribute::*, attribute_builder::*, camera::*, camera_builder::*, data::*, gradient_builder::*,
-    input::*, parameters::*, settings::*, shader::*, shader_builder::*, surface::*,
+    attribute::*, attribute_builder::*, camera::*, camera_builder::*, gradient_builder::*,
+    input::*, output::*, parameters::*, settings::*, shader::*, shader_builder::*, surface::*,
     surface_builder::*,
 };
