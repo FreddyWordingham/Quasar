@@ -34,7 +34,8 @@
                             "/session/id/" + $session_id + "/render/progress",
                             {},
                             function (response) {
-                                console.log(response);
+                                let x = response.slice(0, -1);
+                                console.log(x + "%");
                                 if (response == "FINISHED\n") {
                                     clearInterval(progress_monitor);
                                     $("#render-run_button").show();
@@ -44,22 +45,22 @@
                                         .text("");
                                 } else {
                                     $("#render-progress_bar")
-                                        .css("width", response)
-                                        .text(response);
+                                        .css("width", x + "%")
+                                        .text(x + "%");
                                 }
                             }
                         );
 
-                        let url =
-                            "/static/sessions/" +
-                            $session_id +
-                            "/render.png?" +
-                            new Date().getTime();
-                        $("#render-result").attr("src", url);
+                        // let url =
+                        //     "/static/sessions/" +
+                        //     $session_id +
+                        //     "/render.png?" +
+                        //     new Date().getTime();
+                        // $("#render-result").attr("src", url);
                     }, 1000);
                 },
                 error: function (response) {
-                    alert(response);
+                    alert("Error: " + response);
                 },
             });
         },

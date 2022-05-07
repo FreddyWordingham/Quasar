@@ -4,7 +4,7 @@ use quasar::{
     parse::json,
     render::{Camera, Input, Output, Parameters},
     rt::Ray,
-    util::ProgressBar,
+    // util::ProgressBar,
 };
 use std::{
     fs,
@@ -45,16 +45,21 @@ fn render<T>(output_dir: &Path, input: &Input<T>, camera: &Camera) {
     let divisions = [5, 7];
     let tile_res = [camera.res[0] / divisions[0], camera.res[1] / divisions[1]];
 
-    let mut pb = ProgressBar::new("Rendering", divisions[0] * divisions[1]);
-    for dx in 0..divisions[0] {
-        for dy in 0..divisions[1] {
-            let offset = [tile_res[0] * dx, tile_res[1] * dy];
+    // let mut pb = ProgressBar::new("Rendering", divisions[0] * divisions[1]);
+    for ix in 0..divisions[0] {
+        for iy in 0..divisions[1] {
+            let offset = [tile_res[0] * ix, tile_res[1] * iy];
             let data = render_tile(input, camera, offset, tile_res);
-            data.save(output_dir, &format!("_{}_{}", dx, divisions[1] - dy - 1));
-            pb.tick();
+            data.save(output_dir, &format!("_{}_{}", ix, divisions[1] - iy - 1));
+            // pb.tick();
+            println!(
+                "{:.2}",
+                (iy + (ix * divisions[1])) as f64 / (divisions[0] * divisions[1]) as f64 * 100.0,
+            );
         }
     }
-    pb.finish_with_message("Rendering complete.");
+    // pb.finish_with_message("Rendering complete.");
+    println!("FINISHED");
 }
 
 /// Render a sub-tile.
