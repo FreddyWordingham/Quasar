@@ -1,5 +1,5 @@
 <textarea id="render-input" class="prism-live language-json fill">
-{...}</textarea
+{{ input }}</textarea
 >
 <hr />
 <button id="render-run_button" class="btn btn-primary" onclick="$render.run()">
@@ -70,15 +70,6 @@
     };
 
     $(document).ready(function () {
-        $.ajax({
-            url: "/example_input",
-            type: "get",
-            contentType: "application/json",
-            success: function (response) {
-                $("#render-input").text(response);
-            },
-        });
-
         $("#display_container").append(
             "<img id='render-result' class='display'></img>"
         );

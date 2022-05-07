@@ -53,12 +53,23 @@ async def load(request: Request, session_id: str):
         for item_name in await component.list_items("templates/plugins/default")
     ]
 
+    input = ""
+    if os.path.exists(os.path.join(settings.SESSIONS_DIR, session_id, "render.json")):
+        input = open(
+            os.path.join(settings.SESSIONS_DIR, session_id, "render.json")
+        ).read()
+    else:
+        input = open(
+            os.path.join(settings.SESSIONS_DIR, "example", "render.json")
+        ).read()
+
     return settings.TEMPLATES.TemplateResponse(
         "session.html",
         {
             "request": request,
             "session_id": session_id,
             "active_plugins": active_plugins,
+            "input": input,
         },
     )
 

@@ -23,12 +23,3 @@ async def homepage(request: Request):
     return settings.TEMPLATES.TemplateResponse(
         "index.html", {"request": request, "sessions": Session.data.keys()}
     )
-
-
-@app.get("/example_input")
-async def example_input():
-    """
-    Get example input string.
-    """
-
-    return open(os.path.join(settings.SESSIONS_DIR, "example", "render.json")).read()
