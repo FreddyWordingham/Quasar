@@ -47,7 +47,7 @@ fn render<T>(output_dir: &PathBuf, input: &Input<T>, camera: &Camera) {
         for dy in 0..divisions[1] {
             let offset = [tile_res[0] * dx, tile_res[1] * dy];
             let data = render_tile(input, camera, offset, tile_res);
-            data.save(output_dir, &format!("_{}_{}", dx, dy));
+            data.save(output_dir, &format!("_{}_{}", dx, divisions[1] - dy - 1));
             pb.tick();
         }
     }
