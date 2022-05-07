@@ -8,7 +8,7 @@ use crate::parse::png;
 
 /// Saveable output data.
 pub struct Data {
-    // Colour data.
+    /// Colour data.
     pub colour: Array2<LinSrgba>,
 }
 
@@ -24,7 +24,7 @@ impl Data {
 
     /// Save the output, in it's current state, to the given output directory.
     #[inline]
-    pub fn save(&self, output_dir: &Path, tag: &String) {
+    pub fn save(&self, output_dir: &Path, tag: &str) {
         png::save(
             self.colour.view(),
             &output_dir

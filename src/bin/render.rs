@@ -6,7 +6,10 @@ use quasar::{
     rt::Ray,
     util::ProgressBar,
 };
-use std::{fs, path::PathBuf};
+use std::{
+    fs,
+    path::{Path, PathBuf},
+};
 
 /// Main recipe function.
 fn main() {
@@ -38,7 +41,7 @@ fn main() {
 
 /// Perform the rendering.
 #[inline]
-fn render<T>(output_dir: &PathBuf, input: &Input<T>, camera: &Camera) {
+fn render<T>(output_dir: &Path, input: &Input<T>, camera: &Camera) {
     let divisions = [5, 7];
     let tile_res = [camera.res[0] / divisions[0], camera.res[1] / divisions[1]];
 
@@ -86,7 +89,6 @@ fn render_tile<T>(
 
 /// Sample the scene.
 #[inline]
-#[must_use]
 fn sample<T>(input: &Input<T>, ray: Ray, weight: f32, pixel: [usize; 2], data: &mut Data) {
     let settings = &input.settings;
     let tree = &input.tree;
