@@ -4,6 +4,10 @@ import os
 
 
 def stitch(file_patturn):
+    """
+    Stich together the individual render tiles at a given patturn.
+    """
+
     tiles = glob.glob(f"{file_patturn}*")
     width = len(glob.glob(f"{file_patturn}_0_*"))
     height = int(len(tiles) / width)
