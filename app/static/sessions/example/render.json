@@ -6,7 +6,7 @@
         "max_depth": 6,
         "padding": 0.01
     },
-    "_settings": {
+    "settings": {
         "num_threads": 3,
         "block_size": 1000,
         "bump_dist": 0.001,

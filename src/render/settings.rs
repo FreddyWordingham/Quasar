@@ -3,7 +3,7 @@
 use serde::Deserialize;
 
 /// General settings structure.
-#[derive(Deserialize)]
+#[derive(Clone, Deserialize)]
 pub struct Settings {
     /// Optional limit on number of threads to use.
     pub num_threads: Option<usize>,

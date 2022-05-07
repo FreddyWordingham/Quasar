@@ -10,9 +10,7 @@ fn main() {
     let meshes = parameters.load_meshes();
     let gradients = parameters.load_gradients();
     let attributes = parameters.load_attributes(&gradients);
-    let surfaces = parameters.load_surfaces(&meshes, &attributes);
+    let _surfaces = parameters.load_surfaces(&meshes, &attributes);
     let _shader = parameters.build_shader(&gradients);
-
-    println!("- Surfaces");
-    println!("{}", surfaces.len());
+    let _settings = parameters.build_settings();
 }

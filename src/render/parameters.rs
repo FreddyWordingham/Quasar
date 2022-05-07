@@ -24,7 +24,7 @@ pub struct Parameters {
     /// Oct-tree settings.
     _tree: TreeSettings,
     /// Runtime settings.
-    _settings: Settings,
+    settings: Settings,
     /// Shader settings.
     shader: ShaderBuilder,
     /// Main camera.
@@ -174,5 +174,12 @@ impl Parameters {
     #[must_use]
     pub fn build_shader<'a>(&self, grads: &'a HashMap<String, Gradient<LinSrgba>>) -> Shader<'a> {
         self.shader.build(grads)
+    }
+
+    /// Build the `Settings`.
+    #[inline]
+    #[must_use]
+    pub fn build_settings(&self) -> Settings {
+        self.settings.clone()
     }
 }
