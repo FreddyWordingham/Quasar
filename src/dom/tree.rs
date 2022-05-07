@@ -187,54 +187,6 @@ impl<'a, T> Tree<'a, T> {
         }
     }
 
-    // /// Determine the total number of cells used by this cell.
-    // /// This cell is included in the count.
-    // #[inline]
-    // #[must_use]
-    // pub fn num_cells(&self) -> usize {
-    //     match *self {
-    //         Self::Branch { ref children, .. } => {
-    //             1 + children.iter().map(Self::num_cells).sum::<usize>()
-    //         }
-    //         Self::Leaf { .. } => 1,
-    //     }
-    // }
-
-    // /// Determine the number leaf of cells contained used by this cell.
-    // /// This cell is potentially included in the count.
-    // #[inline]
-    // #[must_use]
-    // pub fn num_leaves(&self) -> usize {
-    //     match *self {
-    //         Self::Branch { ref children, .. } => {
-    //             children.iter().map(Self::num_leaves).sum::<usize>()
-    //         }
-    //         Self::Leaf { .. } => 1,
-    //     }
-    // }
-
-    // /// Determine the number of triangle collision references used by this cell.
-    // #[inline]
-    // #[must_use]
-    // pub fn num_tris(&self) -> usize {
-    //     match *self {
-    //         Self::Branch { ref children, .. } => children.iter().map(Self::num_tris).sum(),
-    //         Self::Leaf { ref tris, .. } => tris.len(),
-    //     }
-    // }
-
-    // /// Determine the maximum depth from this cell to a terminal cell.
-    // #[inline]
-    // #[must_use]
-    // pub fn depth(&self) -> usize {
-    //     match *self {
-    //         Self::Branch { ref children, .. } => {
-    //             1 + children.iter().map(Self::depth).max().unwrap()
-    //         }
-    //         Self::Leaf { .. } => 1,
-    //     }
-    // }
-
     /// If a given position is contained within the cell to being with,
     /// determine the terminal leaf cell containing the given position.
     #[inline]
