@@ -6,7 +6,7 @@ use serde::Deserialize;
 use crate::{geom::Orientation, render::Camera};
 
 /// Camera configuration.
-#[derive(Deserialize)]
+#[derive(Clone, Deserialize)]
 pub struct CameraBuilder {
     /// Position.
     pos: Point3<f64>,

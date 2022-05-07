@@ -25,6 +25,6 @@
         "sky_grad": "sunset",
         "data_grad": "grayscale"
     },
-    "_cameras": [],
+    "cameras": [],
     "surfaces": [["lunar_lander", "default"]]
 }

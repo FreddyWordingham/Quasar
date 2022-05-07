@@ -14,7 +14,7 @@ impl<'a, T> Surface<'a, T> {
     /// Construct a new instance.
     #[inline]
     #[must_use]
-    pub fn new(mesh: Mesh, attr: &'a T) -> Self {
+    pub const fn new(mesh: Mesh, attr: &'a T) -> Self {
         Self { mesh, attr }
     }
 }

@@ -9,8 +9,8 @@ use crate::{
     geom::Mesh,
     parse::{json, wavefront},
     render::{
-        Attribute, AttributeBuilder, CameraBuilder, GradientBuilder, Settings, Shader,
-        ShaderBuilder, Surface, SurfaceBuilder,
+        camera::Camera, Attribute, AttributeBuilder, CameraBuilder, GradientBuilder, Settings,
+        Shader, ShaderBuilder, Surface, SurfaceBuilder,
     },
 };
 
@@ -28,7 +28,7 @@ pub struct Parameters {
     /// Shader settings.
     shader: ShaderBuilder,
     /// Main camera.
-    _cameras: Vec<CameraBuilder>,
+    cameras: Vec<CameraBuilder>,
     /// Surfaces.
     surfaces: Vec<SurfaceBuilder>,
 }
@@ -181,5 +181,12 @@ impl Parameters {
     #[must_use]
     pub fn build_settings(&self) -> Settings {
         self.settings.clone()
+    }
+
+    /// Build the `Camera`s.
+    #[inline]
+    #[must_use]
+    pub fn build_cameras(&self) -> Vec<Camera> {
+        self.cameras.iter().map(|c| c.clone().build()).collect()
     }
 }
