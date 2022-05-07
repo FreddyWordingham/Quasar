@@ -40,7 +40,7 @@ fn main() {
                             let g = n.y.abs() as f32;
                             let b = n.z.abs() as f32;
 
-                            image[(px, py)] = LinSrgba::new(r, g, b, 1.0);
+                            image[(px, py)] += LinSrgba::new(r, g, b, 1.0);
                         }
                     }
                 }
