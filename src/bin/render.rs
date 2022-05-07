@@ -10,7 +10,8 @@ fn main() {
     let meshes = parameters.load_meshes();
     let gradients = parameters.load_gradients();
     let attributes = parameters.load_attributes(&gradients);
-    let _surfaces = parameters.load_surfaces(&meshes, &attributes);
+    let surfaces = parameters.load_surfaces(&meshes, &attributes);
     let _shader = parameters.build_shader(&gradients);
     let _settings = parameters.build_settings();
+    let _tree = parameters.build_tree(&surfaces);
 }

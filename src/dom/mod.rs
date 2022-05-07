@@ -1,5 +1,7 @@
 //! Divisions of space.
 
-pub mod tree_settings;
+pub mod tree;
+pub mod tree_builder;
 
-pub use self::tree_settings::*;
+pub use self::tree::*;
+pub use self::tree_builder::*;

@@ -5,7 +5,7 @@ use serde::Deserialize;
 use std::{collections::HashMap, path::PathBuf};
 
 use crate::{
-    dom::TreeSettings,
+    dom::{Tree, TreeBuilder},
     geom::Mesh,
     parse::{json, wavefront},
     render::{
@@ -22,7 +22,7 @@ pub struct Parameters {
     /// Path to the output directory.
     _output_dir: PathBuf,
     /// Oct-tree settings.
-    _tree: TreeSettings,
+    tree: TreeBuilder,
     /// Runtime settings.
     settings: Settings,
     /// Shader settings.
@@ -194,5 +194,12 @@ impl Parameters {
         }
 
         cameras
+    }
+
+    /// Build the `Tree`.
+    #[inline]
+    #[must_use]
+    pub fn build_tree<'a, T>(&self, surfs: &'a Vec<Surface<T>>) -> Tree<'a, T> {
+        self.tree.build(surfs)
     }
 }
