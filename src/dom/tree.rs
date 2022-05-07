@@ -6,6 +6,7 @@ use crate::{
     dom::TreeBuilder,
     geom::{Cube, Triangle},
     render::Surface,
+    rt::{Hit, Ray, Scan},
     util::ProgressBar,
 };
 
@@ -176,15 +177,15 @@ impl<'a, T> Tree<'a, T> {
         Tree::Branch { boundary, children }
     }
 
-    // /// Reference the cell's boundary.
-    // #[allow(clippy::missing_const_for_fn)]
-    // #[inline]
-    // #[must_use]
-    // pub fn boundary(&self) -> &Cube {
-    //     match *self {
-    //         Self::Branch { ref boundary, .. } | Self::Leaf { ref boundary, .. } => boundary,
-    //     }
-    // }
+    /// Reference the cell's boundary.
+    #[allow(clippy::missing_const_for_fn)]
+    #[inline]
+    #[must_use]
+    pub fn boundary(&self) -> &Cube {
+        match *self {
+            Self::Branch { ref boundary, .. } | Self::Leaf { ref boundary, .. } => boundary,
+        }
+    }
 
     // /// Determine the total number of cells used by this cell.
     // /// This cell is included in the count.
@@ -234,130 +235,130 @@ impl<'a, T> Tree<'a, T> {
     //     }
     // }
 
-    // /// If a given position is contained within the cell to being with,
-    // /// determine the terminal leaf cell containing the given position.
-    // #[inline]
-    // #[must_use]
-    // pub fn try_find_leaf(&self, pos: &Pos3) -> Option<&Self> {
-    //     if !self.boundary().contains(pos) {
-    //         return None;
-    //     }
+    /// If a given position is contained within the cell to being with,
+    /// determine the terminal leaf cell containing the given position.
+    #[inline]
+    #[must_use]
+    pub fn try_find_leaf(&self, pos: &Point3<f64>) -> Option<&Self> {
+        if !self.boundary().contains(pos) {
+            return None;
+        }
 
-    //     Some(self.find_leaf(pos))
-    // }
+        Some(self.find_leaf(pos))
+    }
 
-    // /// Determine the terminal leaf cell containing the given position.
-    // #[must_use]
-    // #[inline]
-    // pub fn find_leaf(&self, pos: &Pos3) -> &Self {
-    //     debug_assert!(self.boundary().contains(pos));
+    /// Determine the terminal leaf cell containing the given position.
+    #[must_use]
+    #[inline]
+    pub fn find_leaf(&self, pos: &Point3<f64>) -> &Self {
+        debug_assert!(self.boundary().contains(pos));
 
-    //     match *self {
-    //         Self::Leaf { .. } => self,
-    //         Self::Branch {
-    //             ref boundary,
-    //             ref children,
-    //         } => {
-    //             let mut index = 0;
-    //             let c = boundary.centre();
+        match *self {
+            Self::Leaf { .. } => self,
+            Self::Branch {
+                ref boundary,
+                ref children,
+            } => {
+                let mut index = 0;
+                let c = boundary.centre();
 
-    //             if pos.x >= c.x {
-    //                 index += 1;
-    //             }
-    //             if pos.y >= c.y {
-    //                 index += 2;
-    //             }
-    //             if pos.z >= c.z {
-    //                 index += 4;
-    //             }
-    //             children[index].find_leaf(pos)
-    //         }
-    //     }
-    // }
+                if pos.x >= c.x {
+                    index += 1;
+                }
+                if pos.y >= c.y {
+                    index += 2;
+                }
+                if pos.z >= c.z {
+                    index += 4;
+                }
+                children[index].find_leaf(pos)
+            }
+        }
+    }
 
-    // /// Scan for what a given Ray, known to be within the cell, would observe.
-    // #[inline]
-    // #[must_use]
-    // fn leaf_scan(&self, ray: &Ray, bump_dist: f64) -> Scan<T> {
-    //     debug_assert!(self.boundary().contains(ray.pos()));
-    //     debug_assert!(bump_dist > 0.0);
+    /// Scan for what a given Ray, known to be within the cell, would observe.
+    #[inline]
+    #[must_use]
+    fn leaf_scan(&self, ray: &Ray, bump_dist: f64) -> Scan<T> {
+        debug_assert!(self.boundary().contains(&ray.pos));
+        debug_assert!(bump_dist > 0.0);
 
-    //     match *self {
-    //         Self::Branch { .. } => {
-    //             panic!("Should not be performing hit scans on branching cells!");
-    //         }
-    //         Self::Leaf {
-    //             ref boundary,
-    //             ref tris,
-    //         } => {
-    //             let boundary_dist = boundary.dist(ray).unwrap();
-    //             if tris.is_empty() {
-    //                 return Scan::new_boundary(boundary_dist);
-    //             }
+        match *self {
+            Self::Branch { .. } => {
+                panic!("Should not be performing hit scans on branching cells!");
+            }
+            Self::Leaf {
+                ref boundary,
+                ref tris,
+            } => {
+                let boundary_dist = boundary.dist(ray).unwrap();
+                if tris.is_empty() {
+                    return Scan::new_boundary(boundary_dist);
+                }
 
-    //             let mut nearest: Option<Hit<T>> = None;
-    //             for &(tri, attr) in tris {
-    //                 if let Some((dist, side)) = tri.dist_side(ray) {
-    //                     if let Some(ref hit) = nearest {
-    //                         if dist < hit.dist() {
-    //                             nearest = Some(Hit::new(attr, dist, side));
-    //                         }
-    //                     } else {
-    //                         nearest = Some(Hit::new(attr, dist, side));
-    //                     }
-    //                 }
-    //             }
+                let mut nearest: Option<Hit<T>> = None;
+                for &(tri, attr) in tris {
+                    if let Some((dist, side)) = tri.dist_side(ray) {
+                        if let Some(ref hit) = nearest {
+                            if dist < hit.dist {
+                                nearest = Some(Hit::new(attr, dist, side));
+                            }
+                        } else {
+                            nearest = Some(Hit::new(attr, dist, side));
+                        }
+                    }
+                }
 
-    //             if let Some(hit) = nearest {
-    //                 if hit.dist() < (boundary_dist + bump_dist) {
-    //                     return Scan::new_surface(hit);
-    //                 }
-    //             }
+                if let Some(hit) = nearest {
+                    if hit.dist < (boundary_dist + bump_dist) {
+                        return Scan::new_surface(hit);
+                    }
+                }
 
-    //             Scan::new_boundary(boundary_dist)
-    //         }
-    //     }
-    // }
+                Scan::new_boundary(boundary_dist)
+            }
+        }
+    }
 
-    // /// Determine what a given Ray would observe.
-    // /// The maximum distance provided does not guarantee that any hit retrieved is less than the given distance.
-    // #[inline]
-    // #[must_use]
-    // pub fn scan(&self, mut ray: Ray, bump_dist: f64, max_dist: f64) -> Option<Hit<T>> {
-    //     debug_assert!(bump_dist > 0.0);
-    //     debug_assert!(max_dist > 0.0);
+    /// Determine what a given Ray would observe.
+    /// The maximum distance provided does not guarantee that any hit retrieved is less than the given distance.
+    #[inline]
+    #[must_use]
+    pub fn scan(&self, mut ray: Ray, bump_dist: f64, max_dist: f64) -> Option<Hit<T>> {
+        debug_assert!(bump_dist > 0.0);
+        debug_assert!(max_dist > 0.0);
 
-    //     let mut dist_travelled = 0.0;
+        let mut dist_traveled = 0.0;
 
-    //     // Move the ray to within the domain of the cell if it isn't already within it.
-    //     if !self.boundary().contains(ray.pos()) {
-    //         if let Some(dist) = self.boundary().dist(&ray) {
-    //             let d = dist + bump_dist;
-    //             ray.travel(d);
-    //             dist_travelled += d;
-    //         } else {
-    //             return None;
-    //         }
-    //     }
+        // Move the ray to within the domain of the cell if it isn't already within it.
+        if !self.boundary().contains(&ray.pos) {
+            if let Some(dist) = self.boundary().dist(&ray) {
+                let d = dist + bump_dist;
+                ray.travel(d);
+                dist_traveled += d;
+            } else {
+                return None;
+            }
+        }
 
-    //     while let Some(cell) = self.try_find_leaf(ray.pos()) {
-    //         if dist_travelled > max_dist {
-    //             return None;
-    //         }
+        while let Some(cell) = self.try_find_leaf(&ray.pos) {
+            if dist_traveled > max_dist {
+                return None;
+            }
 
-    //         match cell.leaf_scan(&ray, bump_dist) {
-    //             Scan::Surface(mut hit) => {
-    //                 *hit.dist_mut() += dist_travelled;
-    //                 return Some(hit);
-    //             }
-    //             Scan::Boundary(dist) => {
-    //                 let d = dist + bump_dist;
-    //                 ray.travel(d);
-    //                 dist_travelled += d;
-    //             }
-    //         }
-    //     }
+            match cell.leaf_scan(&ray, bump_dist) {
+                Scan::Surface(mut hit) => {
+                    hit.dist += dist_traveled;
+                    return Some(hit);
+                }
+                Scan::Boundary(dist) => {
+                    let d = dist + bump_dist;
+                    ray.travel(d);
+                    dist_traveled += d;
+                }
+            }
+        }
 
-    //     None
-    // }
+        None
+    }
 }

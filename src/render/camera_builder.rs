@@ -3,7 +3,7 @@
 use nalgebra::Point3;
 use serde::Deserialize;
 
-use crate::{geom::Orientation, render::Camera};
+use crate::{render::Camera, rt::Orientation};
 
 /// Camera configuration.
 #[derive(Clone, Deserialize)]

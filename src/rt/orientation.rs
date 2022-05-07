@@ -2,7 +2,7 @@
 
 use nalgebra::{Point3, Unit, Vector3};
 
-use crate::geom::Ray;
+use crate::rt::Ray;
 
 /// Orientation.
 pub struct Orientation {

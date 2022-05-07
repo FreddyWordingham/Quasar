@@ -3,7 +3,7 @@
 use nalgebra::{Point3, Unit, Vector3};
 use std::cmp::Ordering;
 
-use crate::geom::{Ray, Side};
+use crate::rt::{Ray, Side};
 
 /// Axis-aligned cube.
 #[derive(Clone)]

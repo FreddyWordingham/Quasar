@@ -1,6 +1,6 @@
 //! Observation camera.
 
-use crate::geom::Orientation;
+use crate::rt::Orientation;
 
 /// Tracer emission.
 pub struct Camera {
