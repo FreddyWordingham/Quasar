@@ -25,14 +25,14 @@
         "sky_grad": "sunset",
         "data_grad": "grayscale"
     },
-    "cameras": [
-        {
+    "cameras": {
+        "frame_one": {
             "pos": [2.0, 5.0, 10.0],
             "tar": [0.0, 0.0, 5.0],
             "fov": 60.0,
             "res": [128, 128],
             "ss_power": 2
         }
-    ],
+    },
     "surfaces": [["lunar_lander", "default"]]
 }

@@ -28,7 +28,7 @@ pub struct Parameters {
     /// Shader settings.
     shader: ShaderBuilder,
     /// Main camera.
-    cameras: Vec<CameraBuilder>,
+    cameras: HashMap<String, CameraBuilder>,
     /// Surfaces.
     surfaces: Vec<SurfaceBuilder>,
 }
@@ -186,7 +186,13 @@ impl Parameters {
     /// Build the `Camera`s.
     #[inline]
     #[must_use]
-    pub fn build_cameras(&self) -> Vec<Camera> {
-        self.cameras.iter().map(|c| c.clone().build()).collect()
+    pub fn build_cameras(&self) -> HashMap<String, Camera> {
+        let mut cameras = HashMap::new();
+
+        for (name, cam) in self.cameras.iter() {
+            cameras.insert(name.clone(), cam.clone().build());
+        }
+
+        cameras
     }
 }
