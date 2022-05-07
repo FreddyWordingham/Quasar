@@ -11,6 +11,7 @@ use crate::{
 };
 
 /// Tree cell enumeration.
+#[allow(clippy::exhaustive_enums)]
 pub enum Tree<'a, T> {
     /// Branching cell.
     Branch {
@@ -32,7 +33,7 @@ impl<'a, T> Tree<'a, T> {
     /// Construct a new instance.
     #[inline]
     #[must_use]
-    pub fn new(sett: &TreeBuilder, surfs: &'a Vec<Surface<T>>) -> Self {
+    pub fn new(sett: &TreeBuilder, surfs: &'a [Surface<T>]) -> Self {
         let mut boundary = Self::init_boundary(surfs);
         boundary.expand(sett.padding);
 
@@ -65,7 +66,7 @@ impl<'a, T> Tree<'a, T> {
     /// Initialise the boundary encompassing all of the mesh vertices.
     #[inline]
     #[must_use]
-    fn init_boundary(surfs: &Vec<Surface<T>>) -> Cube {
+    fn init_boundary(surfs: &[Surface<T>]) -> Cube {
         let mut mins = None;
         let mut maxs = None;
 
@@ -76,7 +77,11 @@ impl<'a, T> Tree<'a, T> {
             if mins.is_none() {
                 mins = Some(mesh_mins);
             } else {
-                for (grid_min, mesh_min) in mins.as_mut().unwrap().iter_mut().zip(mesh_mins.iter())
+                for (grid_min, mesh_min) in mins
+                    .as_mut()
+                    .expect("Failed to initialise Tree boundary.")
+                    .iter_mut()
+                    .zip(mesh_mins.iter())
                 {
                     if mesh_min < grid_min {
                         *grid_min = *mesh_min;
@@ -87,7 +92,11 @@ impl<'a, T> Tree<'a, T> {
             if maxs.is_none() {
                 maxs = Some(mesh_maxs);
             } else {
-                for (grid_max, mesh_max) in maxs.as_mut().unwrap().iter_mut().zip(mesh_maxs.iter())
+                for (grid_max, mesh_max) in maxs
+                    .as_mut()
+                    .expect("Failed to initialise Tree boundary.")
+                    .iter_mut()
+                    .zip(mesh_maxs.iter())
                 {
                     if mesh_max > grid_max {
                         *grid_max = *mesh_max;
@@ -96,7 +105,10 @@ impl<'a, T> Tree<'a, T> {
             }
         }
 
-        Cube::new(mins.unwrap(), maxs.unwrap())
+        Cube::new(
+            mins.expect("Failed to initialise Tree boundary."),
+            maxs.expect("Failed to initialise Tree boundary."),
+        )
     }
 
     /// Initialise the children of a branching cell.
@@ -104,7 +116,7 @@ impl<'a, T> Tree<'a, T> {
     #[inline]
     #[must_use]
     fn init_children(
-        mut pb: &mut ProgressBar,
+        pb: &mut ProgressBar,
         sett: &TreeBuilder,
         parent_boundary: &Cube,
         depth: u32,
@@ -116,13 +128,7 @@ impl<'a, T> Tree<'a, T> {
         let hws = parent_boundary.half_widths();
         let mut make_child = |min_x: f64, min_y: f64, min_z: f64| {
             let min = Point3::new(min_x, min_y, min_z);
-            Self::init_child(
-                &mut pb,
-                sett,
-                Cube::new(min, min + hws),
-                depth,
-                potential_tris,
-            )
+            Self::init_child(pb, sett, Cube::new(min, min + hws), depth, potential_tris)
         };
 
         let min = parent_boundary.mins;
@@ -143,7 +149,7 @@ impl<'a, T> Tree<'a, T> {
     #[inline]
     #[must_use]
     fn init_child(
-        mut pb: &mut ProgressBar,
+        pb: &mut ProgressBar,
         sett: &TreeBuilder,
         boundary: Cube,
         depth: u32,
@@ -166,13 +172,7 @@ impl<'a, T> Tree<'a, T> {
             return Tree::Leaf { boundary, tris };
         }
 
-        let children = Box::new(Self::init_children(
-            &mut pb,
-            sett,
-            &boundary,
-            depth + 1,
-            &tris,
-        ));
+        let children = Box::new(Self::init_children(pb, sett, &boundary, depth + 1, &tris));
 
         Tree::Branch { boundary, children }
     }
@@ -243,7 +243,9 @@ impl<'a, T> Tree<'a, T> {
                 ref boundary,
                 ref tris,
             } => {
-                let boundary_dist = boundary.dist(ray).unwrap();
+                let boundary_dist = boundary
+                    .dist(ray)
+                    .expect("Failed to perform Ray-Tree intersection.");
                 if tris.is_empty() {
                     return Scan::new_boundary(boundary_dist);
                 }

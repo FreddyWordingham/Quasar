@@ -3,6 +3,7 @@
 use crate::rt::Hit;
 
 /// Hit-scan result enumeration.
+#[non_exhaustive]
 #[derive(Clone)]
 pub enum Scan<'a, T> {
     /// Boundary collision.

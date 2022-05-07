@@ -19,7 +19,7 @@ impl TreeBuilder {
     /// Build a `Tree` instance.
     #[inline]
     #[must_use]
-    pub fn build<'a, T>(&self, surfs: &'a Vec<Surface<T>>) -> Tree<'a, T> {
+    pub fn build<'a, T>(&self, surfs: &'a [Surface<T>]) -> Tree<'a, T> {
         Tree::new(self, surfs)
     }
 }

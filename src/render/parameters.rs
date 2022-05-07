@@ -189,7 +189,7 @@ impl Parameters {
     pub fn build_cameras(&self) -> HashMap<String, Camera> {
         let mut cameras = HashMap::new();
 
-        for (name, cam) in self.cameras.iter() {
+        for (name, cam) in &self.cameras {
             cameras.insert(name.clone(), cam.clone().build());
         }
 
@@ -199,7 +199,7 @@ impl Parameters {
     /// Build the `Tree`.
     #[inline]
     #[must_use]
-    pub fn build_tree<'a, T>(&self, surfs: &'a Vec<Surface<T>>) -> Tree<'a, T> {
+    pub fn build_tree<'a, T>(&self, surfs: &'a [Surface<T>]) -> Tree<'a, T> {
         self.tree.build(surfs)
     }
 }
