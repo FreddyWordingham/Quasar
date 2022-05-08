@@ -8,8 +8,6 @@
     },
     "settings": {
         "tiles": [4, 4],
-        "num_threads": 3,
-        "block_size": 1000,
         "bump_dist": 0.001,
         "loop_limit": 1e6,
         "min_weight": 0.01

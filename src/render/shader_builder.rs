@@ -1,4 +1,4 @@
-//! Shader settings.
+//! Shader configration.
 
 use nalgebra::Point3;
 use palette::{Gradient, LinSrgba};
@@ -7,7 +7,7 @@ use std::collections::HashMap;
 
 use crate::render::Shader;
 
-/// Shader configuration.
+/// Aesthetic settings.
 #[derive(Deserialize)]
 pub struct ShaderBuilder {
     /// Sun position (m).

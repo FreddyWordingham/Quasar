@@ -1,14 +1,12 @@
-//! Runtime settings.
+//! Technical configuration.
 
 use serde::Deserialize;
 
-/// General settings structure.
+/// Technical settings.
 #[derive(Clone, Deserialize)]
 pub struct Settings {
     /// Number of tiles resolution.
     pub tiles: [usize; 2],
-    /// Number of tracers to simulate in each thread block.
-    pub block_size: usize,
     /// Bump distance (m).
     pub bump_dist: f64,
     /// Loop limit.

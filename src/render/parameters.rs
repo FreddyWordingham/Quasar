@@ -23,9 +23,9 @@ pub struct Parameters {
     pub output_dir: PathBuf,
     /// Oct-tree settings.
     tree: TreeBuilder,
-    /// Runtime settings.
+    /// Technical settings.
     settings: Settings,
-    /// Shader settings.
+    /// Aesthetic settings.
     shader: ShaderBuilder,
     /// Main camera.
     cameras: HashMap<String, CameraBuilder>,
