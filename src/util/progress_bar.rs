@@ -20,8 +20,9 @@ impl ProgressBar {
         let pb = indicatif::ProgressBar::new(total as u64);
         pb.set_style(
             indicatif::ProgressStyle::default_bar()
-            .template("{spinner:.green} [{elapsed_precise}] [{bar:40.green/red}] [{pos}/{len}] {percent}% ({eta}) {msg}")
-            .progress_chars("\\/")
+                // .template("{spinner:.green} [{elapsed_precise}] [{bar:40.green/red}] [{pos}/{len}] {percent}% ({eta}) {msg}")
+                .template("{percent}")
+                .progress_chars("\\/"),
         );
         pb.set_message(msg);
 

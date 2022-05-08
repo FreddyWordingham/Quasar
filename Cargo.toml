@@ -13,8 +13,9 @@ indicatif = "0.16.2"
 itertools = "0.10.3"
 json5 = "0.4"
 linemux = "0.2.3"
-nalgebra = { version = "0.30.1", features = ["serde-serialize"] }
+nalgebra = { version = "0.31.0", features = ["serde-serialize"] }
 ndarray = { version = "0.15", features = ["rayon"] }
+num_cpus = "1.13.1"
 palette = "0.6.0"
 png = "0.17.5"
 rand  = "0.8.5"
