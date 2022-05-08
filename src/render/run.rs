@@ -16,8 +16,8 @@ use crate::{
 
 /// Run the simulation with the given parameterisation.
 #[inline]
-pub fn run<T: Fn(&Input<'_>, Ray, f32, [usize; 2], &mut Output) -> () + Send + Sync + Copy>(
-    parameters: Parameters,
+pub fn run<T: Fn(&Input<'_>, Ray, f32, [usize; 2], &mut Output) + Send + Sync + Copy>(
+    parameters: &Parameters,
     sample: T,
 ) {
     // Setup.
@@ -38,15 +38,16 @@ pub fn run<T: Fn(&Input<'_>, Ray, f32, [usize; 2], &mut Output) -> () + Send + S
     if output_dir.exists() {
         fs::remove_dir_all(&output_dir).expect("Failed to initialise output directory.");
     }
-    fs::create_dir(&output_dir).expect("Failed to create output directory.");
+    fs::create_dir_all(&output_dir).expect("Failed to create output directory.");
     render(&output_dir, &runtime, &camera, sample);
 
     println!("FINISHED");
 }
 
 /// Perform the rendering.
+#[allow(clippy::integer_division)]
 #[inline]
-fn render<T: Fn(&Input<'_>, Ray, f32, [usize; 2], &mut Output) -> () + Send + Sync + Clone>(
+fn render<T: Fn(&Input<'_>, Ray, f32, [usize; 2], &mut Output) + Send + Sync + Clone>(
     output_dir: &Path,
     input: &Input,
     camera: &Camera,
@@ -63,10 +64,12 @@ fn render<T: Fn(&Input<'_>, Ray, f32, [usize; 2], &mut Output) -> () + Send + Sy
     }
     tile_order.shuffle(&mut thread_rng());
 
-    let pb = ProgressBar::new("Rendering image", tiles[0] * tiles[1]);
-    let pb = Arc::new(Mutex::new(pb));
+    let pb = Arc::new(Mutex::new(ProgressBar::new(
+        "Rendering image",
+        tiles[0] * tiles[1],
+    )));
     let print_width = ((tiles[0].max(tiles[1])) as f64).log10() as usize + 1;
-    tile_order.par_iter().for_each(|(ix, iy)| {
+    tile_order.par_iter().for_each(|&(ix, iy)| {
         let offset = [tile_res[0] * ix, tile_res[1] * iy];
         let data = render_tile(input, camera, offset, tile_res, sample.clone());
         data.save(
@@ -79,8 +82,7 @@ fn render<T: Fn(&Input<'_>, Ray, f32, [usize; 2], &mut Output) -> () + Send + Sy
             ),
         );
 
-        let mut pb = pb.lock().expect("Could not lock progress bar.");
-        pb.tick();
+        pb.lock().expect("Could not lock progress bar.").tick();
     });
     pb.lock()
         .expect("Could not lock progress bar.")
@@ -90,7 +92,7 @@ fn render<T: Fn(&Input<'_>, Ray, f32, [usize; 2], &mut Output) -> () + Send + Sy
 /// Render a sub-tile.
 #[inline]
 #[must_use]
-fn render_tile<T: Fn(&Input<'_>, Ray, f32, [usize; 2], &mut Output) -> ()>(
+fn render_tile<T: Fn(&Input<'_>, Ray, f32, [usize; 2], &mut Output)>(
     input: &Input,
     camera: &Camera,
     offset: [usize; 2],
@@ -109,7 +111,7 @@ fn render_tile<T: Fn(&Input<'_>, Ray, f32, [usize; 2], &mut Output) -> ()>(
             for ssx in 0..camera.ss_power {
                 for ssy in 0..camera.ss_power {
                     let ray = camera.emit([rx, ry], [ssx, ssy]);
-                    sample(input, ray, weight, [px, py], &mut data)
+                    sample(input, ray, weight, [px, py], &mut data);
                 }
             }
         }

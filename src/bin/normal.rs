@@ -11,7 +11,7 @@ use std::path::PathBuf;
 fn main() {
     args!(_bin_path: PathBuf, parameters_path: PathBuf);
     let parameters = json::load::<Parameters>(&parameters_path);
-    run(parameters, sample);
+    run(&parameters, sample);
 }
 
 /// Sample the first hit normal direction.
