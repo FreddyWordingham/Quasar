@@ -45,11 +45,11 @@
                     for (var j = 0; j < tiles_y; ++j) {
                         for (var i = 0; i < tiles_x; ++i) {
                             $("#render-progress").append(
-                                "<div><img id='render-tile-" +
+                                "<img id='render-tile-" +
                                     i +
                                     "_" +
                                     j +
-                                    "'></img></div>"
+                                    "'></img>"
                             );
                         }
                     }
@@ -87,12 +87,12 @@
                                         }
                                     );
                                 } else {
-                                    $("#render-progress_bar")
-                                        .css("width", x + "%")
-                                        .text(x + "%");
-
                                     if (response != last_response) {
                                         last_response = response;
+
+                                        $("#render-progress_bar")
+                                            .css("width", x + "%")
+                                            .text(x + "%");
 
                                         $.get(
                                             "/session/id/" +
@@ -111,43 +111,33 @@
                                                     ) {
                                                         return;
                                                     }
+                                                    loaded_tiles.push(value);
 
-                                                    console.log(">> " + value);
-
-                                                    let numbers =
-                                                        value.match(/\d/g);
-                                                    let xi =
-                                                        numbers[
-                                                            numbers.length - 2
-                                                        ];
-                                                    let yi =
-                                                        numbers[
-                                                            numbers.length - 1
-                                                        ];
+                                                    let xi = value.slice(
+                                                        -11,
+                                                        -8
+                                                    );
+                                                    let yi = value.slice(
+                                                        -7,
+                                                        -4
+                                                    );
 
                                                     let url =
                                                         "/static/sessions/" +
                                                         $session_id +
                                                         "/frame_one/colour_" +
-                                                        String(xi).padStart(
-                                                            3,
-                                                            "0"
-                                                        ) +
+                                                        xi +
                                                         "_" +
-                                                        String(yi).padStart(
-                                                            3,
-                                                            "0"
-                                                        ) +
+                                                        yi +
                                                         ".png?" +
                                                         new Date().getTime();
+
                                                     $(
                                                         "#render-tile-" +
-                                                            yi +
+                                                            parseInt(xi) +
                                                             "_" +
-                                                            xi
+                                                            parseInt(yi)
                                                     ).attr("src", url);
-
-                                                    loaded_tiles.push(value);
                                                 }
                                                 response.forEach(display_tile);
                                             }
