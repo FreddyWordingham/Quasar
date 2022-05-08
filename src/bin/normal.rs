@@ -22,7 +22,7 @@ fn sample(input: &Input, ray: Ray, weight: f32, pixel: [usize; 2], data: &mut Ou
     let tree = &input.tree;
     let _shader = &input.shader;
 
-    if let Some(hit) = tree.scan(ray, settings.bump_dist, 200.0) {
+    if let Some(hit) = tree.scan(ray, settings.bump_dist, 1.0e9) {
         // let d = hit.dist.min(20.0) / 20.0;
         // image[(px, py)] = shader.data_grad.get(d as f32);
 
