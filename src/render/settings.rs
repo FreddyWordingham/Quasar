@@ -5,6 +5,8 @@ use serde::Deserialize;
 /// General settings structure.
 #[derive(Clone, Deserialize)]
 pub struct Settings {
+    /// Number of tiles resolution.
+    pub tiles: Option<[usize; 2]>,
     /// Optional limit on number of threads to use.
     pub num_threads: Option<usize>,
     /// Number of tracers to simulate in each thread block.

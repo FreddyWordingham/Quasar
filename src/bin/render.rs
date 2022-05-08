@@ -42,19 +42,19 @@ fn main() {
 /// Perform the rendering.
 #[inline]
 fn render<T>(output_dir: &Path, input: &Input<T>, camera: &Camera) {
-    let divisions = [5, 7];
-    let tile_res = [camera.res[0] / divisions[0], camera.res[1] / divisions[1]];
+    let tiles = input.settings.tiles.unwrap_or([1, 1]);
+    let tile_res = [camera.res[0] / tiles[0], camera.res[1] / tiles[1]];
 
-    // let mut pb = ProgressBar::new("Rendering", divisions[0] * divisions[1]);
-    for ix in 0..divisions[0] {
-        for iy in 0..divisions[1] {
+    // let mut pb = ProgressBar::new("Rendering", tiles[0] * tiles[1]);
+    for ix in 0..tiles[0] {
+        for iy in 0..tiles[1] {
             let offset = [tile_res[0] * ix, tile_res[1] * iy];
             let data = render_tile(input, camera, offset, tile_res);
-            data.save(output_dir, &format!("_{}_{}", ix, divisions[1] - iy - 1));
+            data.save(output_dir, &format!("_{}_{}", ix, tiles[1] - iy - 1));
             // pb.tick();
             println!(
                 "{:.2}",
-                (iy + (ix * divisions[1])) as f64 / (divisions[0] * divisions[1]) as f64 * 100.0,
+                (iy + (ix * tiles[1])) as f64 / (tiles[0] * tiles[1]) as f64 * 100.0,
             );
         }
     }
