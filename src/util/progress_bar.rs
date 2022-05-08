@@ -20,8 +20,7 @@ impl ProgressBar {
         let pb = indicatif::ProgressBar::new(total as u64);
         pb.set_style(
             indicatif::ProgressStyle::default_bar()
-                // .template("{spinner:.green} [{elapsed_precise}] [{bar:40.green/red}] [{pos}/{len}] {percent}% ({eta}) {msg}")
-                .template("{percent}")
+                .template("{spinner:.green} [{elapsed_precise}] [{bar:40.green/red}] [{pos}/{len}] {percent}% ({eta}) {msg}")
                 .progress_chars("\\/"),
         );
         pb.set_message(msg);
@@ -38,6 +37,7 @@ impl ProgressBar {
     pub fn tick(&mut self) {
         self.count += 1;
         self.pb.inc(1);
+        println!("{:.2}", self.count as f64 / self.total as f64 * 100.0);
     }
 
     /// Request a block of values to work on.
@@ -59,6 +59,7 @@ impl ProgressBar {
 
             self.count += alloc;
             self.pb.inc(alloc as u64);
+            println!("{:.2}", self.count as f64 / self.total as f64 * 100.0);
 
             Some((start, end))
         }
