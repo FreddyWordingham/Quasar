@@ -7,9 +7,11 @@ use quasar::{
     util::ProgressBar,
 };
 use rand::{seq::SliceRandom, thread_rng};
+use rayon::iter::{IntoParallelRefIterator, ParallelIterator};
 use std::{
     fs,
     path::{Path, PathBuf},
+    sync::{Arc, Mutex},
 };
 
 /// Main recipe function.
@@ -44,7 +46,7 @@ fn main() {
 
 /// Perform the rendering.
 #[inline]
-fn render<T>(output_dir: &Path, input: &Input<T>, camera: &Camera) {
+fn render(output_dir: &Path, input: &Input, camera: &Camera) {
     let tiles = input.settings.tiles.unwrap_or([1, 1]);
     let tile_res = [camera.res[0] / tiles[0], camera.res[1] / tiles[1]];
 
@@ -56,28 +58,28 @@ fn render<T>(output_dir: &Path, input: &Input<T>, camera: &Camera) {
     }
     tile_order.shuffle(&mut thread_rng());
 
-    let mut pb = ProgressBar::new("Rendering image", tiles[0] * tiles[1]);
-    for (ix, iy) in tile_order.iter() {
+    let pb = ProgressBar::new("Rendering image", tiles[0] * tiles[1]);
+    let pb = Arc::new(Mutex::new(pb));
+    tile_order.par_iter().for_each(|(ix, iy)| {
         let offset = [tile_res[0] * ix, tile_res[1] * iy];
         let data = render_tile(input, camera, offset, tile_res);
         data.save(
             output_dir,
             &format!("_{:0>3}_{:0>3}", ix, tiles[1] - iy - 1),
         );
+
+        let mut pb = pb.lock().expect("Could not lock progress bar.");
         pb.tick();
-    }
-    pb.finish_with_message("Rendering complete")
+    });
+    pb.lock()
+        .expect("Could not lock progress bar.")
+        .finish_with_message("Rendering complete");
 }
 
 /// Render a sub-tile.
 #[inline]
 #[must_use]
-fn render_tile<T>(
-    input: &Input<T>,
-    camera: &Camera,
-    offset: [usize; 2],
-    sub_res: [usize; 2],
-) -> Output {
+fn render_tile(input: &Input, camera: &Camera, offset: [usize; 2], sub_res: [usize; 2]) -> Output {
     let mut data = Output::new(sub_res);
 
     let weight = 1.0 / (camera.ss_power * camera.ss_power) as f32;
@@ -101,7 +103,7 @@ fn render_tile<T>(
 
 /// Sample the scene.
 #[inline]
-fn sample<T>(input: &Input<T>, ray: Ray, weight: f32, pixel: [usize; 2], data: &mut Output) {
+fn sample(input: &Input, ray: Ray, weight: f32, pixel: [usize; 2], data: &mut Output) {
     let settings = &input.settings;
     let tree = &input.tree;
     let _shader = &input.shader;

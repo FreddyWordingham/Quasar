@@ -3,5 +3,4 @@
 pub mod tree;
 pub mod tree_builder;
 
-pub use self::tree::*;
-pub use self::tree_builder::*;
+pub use self::{tree::*, tree_builder::*};

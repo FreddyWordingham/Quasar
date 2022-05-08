@@ -2,8 +2,10 @@
 
 use nalgebra::{Point3, Unit, Vector3};
 
-use crate::geom::Cube;
-use crate::rt::{Ray, Side};
+use crate::{
+    geom::Cube,
+    rt::{Ray, Side},
+};
 
 /// Triangle.
 #[derive(Clone)]
