@@ -1,6 +1,5 @@
 //! Run control.
 
-use palette::LinSrgba;
 use rand::{seq::SliceRandom, thread_rng};
 use rayon::iter::{IntoParallelRefIterator, ParallelIterator};
 use std::{
@@ -17,7 +16,10 @@ use crate::{
 
 /// Run the simulation with the given parameterisation.
 #[inline]
-pub fn run(parameters: Parameters) {
+pub fn run<T: Fn(&Input<'_>, Ray, f32, [usize; 2], &mut Output) -> () + Send + Sync + Copy>(
+    parameters: Parameters,
+    sample: T,
+) {
     // Setup.
     let settings = parameters.build_settings();
     let meshes = parameters.load_meshes();
@@ -38,7 +40,7 @@ pub fn run(parameters: Parameters) {
             fs::remove_dir_all(&output_dir).expect("Failed to initialise output directory.");
         }
         fs::create_dir(&output_dir).expect("Failed to create output directory.");
-        render(&output_dir, &runtime, &cam);
+        render(&output_dir, &runtime, &cam, sample.clone());
     }
 
     println!("FINISHED");
@@ -46,7 +48,12 @@ pub fn run(parameters: Parameters) {
 
 /// Perform the rendering.
 #[inline]
-fn render(output_dir: &Path, input: &Input, camera: &Camera) {
+fn render<T: Fn(&Input<'_>, Ray, f32, [usize; 2], &mut Output) -> () + Send + Sync + Clone>(
+    output_dir: &Path,
+    input: &Input,
+    camera: &Camera,
+    sample: T,
+) {
     let tiles = input.settings.tiles.unwrap_or([1, 1]);
     let tile_res = [camera.res[0] / tiles[0], camera.res[1] / tiles[1]];
 
@@ -62,7 +69,7 @@ fn render(output_dir: &Path, input: &Input, camera: &Camera) {
     let pb = Arc::new(Mutex::new(pb));
     tile_order.par_iter().for_each(|(ix, iy)| {
         let offset = [tile_res[0] * ix, tile_res[1] * iy];
-        let data = render_tile(input, camera, offset, tile_res);
+        let data = render_tile(input, camera, offset, tile_res, sample.clone());
         data.save(
             output_dir,
             &format!("_{:0>3}_{:0>3}", ix, tiles[1] - iy - 1),
@@ -79,7 +86,13 @@ fn render(output_dir: &Path, input: &Input, camera: &Camera) {
 /// Render a sub-tile.
 #[inline]
 #[must_use]
-fn render_tile(input: &Input, camera: &Camera, offset: [usize; 2], sub_res: [usize; 2]) -> Output {
+fn render_tile<T: Fn(&Input<'_>, Ray, f32, [usize; 2], &mut Output) -> ()>(
+    input: &Input,
+    camera: &Camera,
+    offset: [usize; 2],
+    sub_res: [usize; 2],
+    sample: T,
+) -> Output {
     let mut data = Output::new(sub_res);
 
     let weight = 1.0 / (camera.ss_power * camera.ss_power) as f32;
@@ -99,24 +112,4 @@ fn render_tile(input: &Input, camera: &Camera, offset: [usize; 2], sub_res: [usi
     }
 
     data
-}
-
-/// Sample the scene.
-#[inline]
-fn sample(input: &Input, ray: Ray, weight: f32, pixel: [usize; 2], data: &mut Output) {
-    let settings = &input.settings;
-    let tree = &input.tree;
-    let _shader = &input.shader;
-
-    if let Some(hit) = tree.scan(ray, settings.bump_dist, 200.0) {
-        // let d = hit.dist.min(20.0) / 20.0;
-        // image[(px, py)] = shader.data_grad.get(d as f32);
-
-        let n = hit.side.norm();
-        let r = n.x.abs() as f32;
-        let g = n.y.abs() as f32;
-        let b = n.z.abs() as f32;
-
-        data.colour[pixel] += LinSrgba::new(r, g, b, 1.0) * weight;
-    }
 }
