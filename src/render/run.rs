@@ -3,6 +3,7 @@
 use rand::{seq::SliceRandom, thread_rng};
 use rayon::iter::{IntoParallelRefIterator, ParallelIterator};
 use std::{
+    fs,
     path::Path,
     sync::{Arc, Mutex},
 };
@@ -33,7 +34,12 @@ pub fn run<T: Fn(&Input<'_>, Ray, f32, [usize; 2], &mut Output) -> () + Send + S
     let runtime = Input::new(settings, shader, tree);
 
     // Run
-    render(&parameters.output_dir, &runtime, &camera, sample);
+    let output_dir = parameters.output_dir.join("tiles");
+    if output_dir.exists() {
+        fs::remove_dir_all(&output_dir).expect("Failed to initialise output directory.");
+    }
+    fs::create_dir(&output_dir).expect("Failed to create output directory.");
+    render(&output_dir, &runtime, &camera, sample);
 
     println!("FINISHED");
 }
@@ -59,12 +65,18 @@ fn render<T: Fn(&Input<'_>, Ray, f32, [usize; 2], &mut Output) -> () + Send + Sy
 
     let pb = ProgressBar::new("Rendering image", tiles[0] * tiles[1]);
     let pb = Arc::new(Mutex::new(pb));
+    let print_width = ((tiles[0].max(tiles[1])) as f64).log10() as usize + 1;
     tile_order.par_iter().for_each(|(ix, iy)| {
         let offset = [tile_res[0] * ix, tile_res[1] * iy];
         let data = render_tile(input, camera, offset, tile_res, sample.clone());
         data.save(
             output_dir,
-            &format!("_{:0>3}_{:0>3}", ix, tiles[1] - iy - 1),
+            &format!(
+                "{:0>width$}_{:0>width$}",
+                ix,
+                tiles[1] - iy - 1,
+                width = print_width
+            ),
         );
 
         let mut pb = pb.lock().expect("Could not lock progress bar.");

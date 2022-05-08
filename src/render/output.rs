@@ -28,7 +28,7 @@ impl Output {
         png::save(
             self.colour.view(),
             &output_dir
-                .join(&format!("colour{}", tag))
+                .join(&format!("colour_{}", tag))
                 .with_extension("png"),
         );
     }

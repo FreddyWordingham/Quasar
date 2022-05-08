@@ -80,7 +80,7 @@
                                             $("#display_container").append(
                                                 "<img id='render-result' class='display' src='/static/sessions/" +
                                                     $session_id +
-                                                    "/frame_one/colour.png?" +
+                                                    "/tiles/colour.png?" +
                                                     new Date().getTime() +
                                                     "'></img>"
                                             );
@@ -113,19 +113,17 @@
                                                     }
                                                     loaded_tiles.push(value);
 
-                                                    let xi = value.slice(
-                                                        -11,
-                                                        -8
-                                                    );
-                                                    let yi = value.slice(
-                                                        -7,
-                                                        -4
-                                                    );
+                                                    let parts =
+                                                        value.split("_");
+                                                    let xi = parts[1];
+                                                    let yi =
+                                                        parts[2].split(".")[0];
+                                                    console.log(xi, yi);
 
                                                     let url =
                                                         "/static/sessions/" +
                                                         $session_id +
-                                                        "/frame_one/colour_" +
+                                                        "/tiles/colour_" +
                                                         xi +
                                                         "_" +
                                                         yi +

@@ -3,6 +3,7 @@ from pydantic import BaseModel
 from subprocess import Popen
 import glob
 import json
+import math
 import os
 import re
 import shutil
@@ -189,9 +190,7 @@ async def list_tiles(session_id: str):
     List the completed tiles filenames.
     """
 
-    file_patturn = os.path.join(
-        settings.SESSIONS_DIR, session_id, "frame_one", "colour"
-    )
+    file_patturn = os.path.join(settings.SESSIONS_DIR, session_id, "tiles", "colour")
 
     files = [os.path.basename(f) for f in glob.glob(f"{file_patturn}*")]
     files.sort()
@@ -205,7 +204,7 @@ async def stitch_tiles(session_id: str):
     Stitch the tiles of a rendering.
     """
 
-    stitch(os.path.join(settings.SESSIONS_DIR, session_id, "frame_one", "colour"))
+    stitch(os.path.join(settings.SESSIONS_DIR, session_id, "tiles", "colour"))
 
 
 def stitch(file_patturn):
@@ -214,11 +213,22 @@ def stitch(file_patturn):
     """
 
     tiles = glob.glob(f"{file_patturn}*")
-    width = len(glob.glob(f"{file_patturn}_000_*"))
-    height = len(glob.glob(f"{file_patturn}_*_000.png"))
+    width = 0
+    height = 0
+    for name in tiles:
+        parts = name.split("_")
+        xi = int(parts[-2])
+        yi = int(parts[-1].split(".")[0])
+        if xi > width:
+            width = xi
+        if yi > height:
+            height = yi
 
+    print_width = int(math.log10(max(width, height))) + 1
     for n in range(height):
-        slice_patturn = f"{file_patturn}_{n:03}_*"
-        os.system(f"convert -append {slice_patturn} {file_patturn}_slice_{n:03}.png")
+        slice_patturn = f"{file_patturn}_{n:0{print_width}}_*"
+        os.system(
+            f"convert -append {slice_patturn} {file_patturn}_slice_{n:0{print_width}}.png"
+        )
 
     os.system(f"convert +append {file_patturn}_slice_* {file_patturn}.png")
