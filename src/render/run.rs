@@ -3,7 +3,6 @@
 use rand::{seq::SliceRandom, thread_rng};
 use rayon::iter::{IntoParallelRefIterator, ParallelIterator};
 use std::{
-    fs,
     path::Path,
     sync::{Arc, Mutex},
 };
@@ -28,20 +27,13 @@ pub fn run<T: Fn(&Input<'_>, Ray, f32, [usize; 2], &mut Output) -> () + Send + S
     let surfaces = parameters.load_surfaces(&meshes, &attributes);
     let tree = parameters.build_tree(&surfaces);
     let shader = parameters.build_shader(&gradients);
-    let cameras = parameters.build_cameras();
+    let camera = parameters.build_camera();
 
     // Create runtime object.
     let runtime = Input::new(settings, shader, tree);
 
     // Run
-    for (name, cam) in cameras {
-        let output_dir = parameters.output_dir.join(name.clone());
-        if output_dir.exists() {
-            fs::remove_dir_all(&output_dir).expect("Failed to initialise output directory.");
-        }
-        fs::create_dir(&output_dir).expect("Failed to create output directory.");
-        render(&output_dir, &runtime, &cam, sample.clone());
-    }
+    render(&parameters.output_dir, &runtime, &camera, sample);
 
     println!("FINISHED");
 }

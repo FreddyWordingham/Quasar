@@ -28,7 +28,7 @@ pub struct Parameters {
     /// Aesthetic settings.
     shader: ShaderBuilder,
     /// Main camera.
-    cameras: HashMap<String, CameraBuilder>,
+    camera: CameraBuilder,
     /// Surfaces.
     surfaces: Vec<SurfaceBuilder>,
 }
@@ -186,14 +186,8 @@ impl Parameters {
     /// Build the `Camera`s.
     #[inline]
     #[must_use]
-    pub fn build_cameras(&self) -> HashMap<String, Camera> {
-        let mut cameras = HashMap::new();
-
-        for (name, cam) in &self.cameras {
-            cameras.insert(name.clone(), cam.clone().build());
-        }
-
-        cameras
+    pub fn build_camera(&self) -> Camera {
+        self.camera.clone().build()
     }
 
     /// Build the `Tree`.
