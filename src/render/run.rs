@@ -54,7 +54,7 @@ fn render<T: Fn(&Input<'_>, Ray, f32, [usize; 2], &mut Output) -> () + Send + Sy
     camera: &Camera,
     sample: T,
 ) {
-    let tiles = input.settings.tiles.unwrap_or([1, 1]);
+    let tiles = input.settings.tiles;
     let tile_res = [camera.res[0] / tiles[0], camera.res[1] / tiles[1]];
 
     let mut tile_order = Vec::with_capacity(tiles[0] * tiles[1]);
