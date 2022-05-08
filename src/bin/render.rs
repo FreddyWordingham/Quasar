@@ -57,7 +57,7 @@ fn render<T>(output_dir: &Path, input: &Input<T>, camera: &Camera) {
     tile_order.shuffle(&mut thread_rng());
 
     let mut pb = ProgressBar::new("Rendering image", tiles[0] * tiles[1]);
-    for (n, (ix, iy)) in tile_order.iter().enumerate() {
+    for (ix, iy) in tile_order.iter() {
         let offset = [tile_res[0] * ix, tile_res[1] * iy];
         let data = render_tile(input, camera, offset, tile_res);
         data.save(

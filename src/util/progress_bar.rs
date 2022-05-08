@@ -1,5 +1,7 @@
 //! Progress-Bar implementation.
 
+use atty::Stream;
+
 /// Progress-bar structure.
 pub struct ProgressBar {
     /// Graphics.
@@ -37,7 +39,10 @@ impl ProgressBar {
     pub fn tick(&mut self) {
         self.count += 1;
         self.pb.inc(1);
-        println!("{:.2}", self.count as f64 / self.total as f64 * 100.0);
+
+        if !atty::is(Stream::Stdout) {
+            println!("{:.2}", self.count as f64 / self.total as f64 * 100.0);
+        }
     }
 
     /// Request a block of values to work on.
@@ -59,7 +64,10 @@ impl ProgressBar {
 
             self.count += alloc;
             self.pb.inc(alloc as u64);
-            println!("{:.2}", self.count as f64 / self.total as f64 * 100.0);
+
+            if !atty::is(Stream::Stdout) {
+                println!("{:.2}", self.count as f64 / self.total as f64 * 100.0);
+            }
 
             Some((start, end))
         }

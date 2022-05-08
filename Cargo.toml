@@ -8,6 +8,7 @@ keywords = ["render", "physics", "simulation"]
 categories = ["science", "simulation"]
 
 [dependencies]
+atty = "0.2.14"
 hex = "0.4"
 indicatif = "0.16.2"
 itertools = "0.10.3"
