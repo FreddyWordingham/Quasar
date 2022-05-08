@@ -214,11 +214,11 @@ def stitch(file_patturn):
     """
 
     tiles = glob.glob(f"{file_patturn}*")
-    width = len(glob.glob(f"{file_patturn}_0_*"))
-    height = len(glob.glob(f"{file_patturn}_*_0.png"))
+    width = len(glob.glob(f"{file_patturn}_000_*"))
+    height = len(glob.glob(f"{file_patturn}_*_000.png"))
 
     for n in range(height):
-        slice_patturn = f"{file_patturn}_{n}_*"
-        os.system(f"convert -append {slice_patturn} {file_patturn}_slice_{n}.png")
+        slice_patturn = f"{file_patturn}_{n:03}_*"
+        os.system(f"convert -append {slice_patturn} {file_patturn}_slice_{n:03}.png")
 
     os.system(f"convert +append {file_patturn}_slice_* {file_patturn}.png")

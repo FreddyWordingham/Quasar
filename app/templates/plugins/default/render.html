@@ -1,11 +1,3 @@
-<style>
-    #render-progress {
-        display: grid;
-        grid-template-columns: repeat(7, auto);
-        grid-template-rows: repeat(5, auto);
-    }
-</style>
-
 <textarea id="render-input" class="prism-live language-json fill">
 {{ input }}</textarea
 >
@@ -37,14 +29,21 @@
                     config: config,
                 }),
                 success: function () {
+                    const obj = JSON.parse(config);
+                    let tiles_x = obj["settings"]["tiles"][0];
+                    let tiles_y = obj["settings"]["tiles"][1];
+
                     $("#render-result").remove();
                     $("#display_container").append(
-                        "<div id='render-progress' class='display'></div>"
+                        "<div id='render-progress' class='display' style='display: grid; justify-content: center; align-content: center; grid-template-columns: repeat(" +
+                            tiles_x +
+                            ", auto); grid-template-rows: repeat(" +
+                            tiles_y +
+                            ", auto);'></div>"
                     );
 
-                    const obj = JSON.parse(config);
-                    for (var i = 0; i < obj["settings"]["tiles"][0]; ++i) {
-                        for (var j = 0; j < obj["settings"]["tiles"][1]; ++j) {
+                    for (var j = 0; j < tiles_y; ++j) {
+                        for (var i = 0; i < tiles_x; ++i) {
                             $("#render-progress").append(
                                 "<div><img id='render-tile-" +
                                     i +
@@ -56,6 +55,7 @@
                     }
 
                     var last_response = "start";
+                    var loaded_tiles = [];
                     let progress_monitor = setInterval(function () {
                         $.get(
                             "/session/id/" + $session_id + "/render/progress",
@@ -78,17 +78,11 @@
                                         function (response) {
                                             $("#render-progress").remove();
                                             $("#display_container").append(
-                                                "<img id='render-result' class='display'></img>"
-                                            );
-
-                                            let url =
-                                                "/static/sessions/" +
-                                                $session_id +
-                                                "/frame_one/colour.png?" +
-                                                new Date().getTime();
-                                            $("#render-result").attr(
-                                                "src",
-                                                url
+                                                "<img id='render-result' class='display' src='/static/sessions/" +
+                                                    $session_id +
+                                                    "/frame_one/colour.png?" +
+                                                    new Date().getTime() +
+                                                    "'></img>"
                                             );
                                         }
                                     );
@@ -110,6 +104,16 @@
                                                     value,
                                                     index
                                                 ) {
+                                                    if (
+                                                        loaded_tiles.includes(
+                                                            value
+                                                        )
+                                                    ) {
+                                                        return;
+                                                    }
+
+                                                    console.log(">> " + value);
+
                                                     let numbers =
                                                         value.match(/\d/g);
                                                     let xi =
@@ -125,17 +129,25 @@
                                                         "/static/sessions/" +
                                                         $session_id +
                                                         "/frame_one/colour_" +
-                                                        xi +
+                                                        String(xi).padStart(
+                                                            3,
+                                                            "0"
+                                                        ) +
                                                         "_" +
-                                                        yi +
+                                                        String(yi).padStart(
+                                                            3,
+                                                            "0"
+                                                        ) +
                                                         ".png?" +
                                                         new Date().getTime();
                                                     $(
                                                         "#render-tile-" +
-                                                            xi +
+                                                            yi +
                                                             "_" +
-                                                            yi
+                                                            xi
                                                     ).attr("src", url);
+
+                                                    loaded_tiles.push(value);
                                                 }
                                                 response.forEach(display_tile);
                                             }
