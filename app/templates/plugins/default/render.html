@@ -39,7 +39,7 @@
                 success: function () {
                     $("#render-result").remove();
                     $("#display_container").append(
-                        "<div id='render-progress' class='display' width='100%' height='100%'></div>"
+                        "<div id='render-progress' class='display'></div>"
                     );
 
                     const obj = JSON.parse(config);
@@ -69,58 +69,78 @@
                                     $("#render-progress_bar")
                                         .css("width", "0%")
                                         .text("");
+
+                                    $.post(
+                                        "/session/id/" +
+                                            $session_id +
+                                            "/render/stitch",
+                                        {},
+                                        function (response) {
+                                            $("#render-progress").remove();
+                                            $("#display_container").append(
+                                                "<img id='render-result' class='display'></img>"
+                                            );
+
+                                            let url =
+                                                "/static/sessions/" +
+                                                $session_id +
+                                                "/frame_one/colour.png?" +
+                                                new Date().getTime();
+                                            $("#render-result").attr(
+                                                "src",
+                                                url
+                                            );
+                                        }
+                                    );
                                 } else {
                                     $("#render-progress_bar")
                                         .css("width", x + "%")
                                         .text(x + "%");
 
-                                    let url =
-                                        "/static/sessions/" +
-                                        $session_id +
-                                        "/frame_one/colour.png?" +
-                                        new Date().getTime();
-                                    $("#render-result").attr("src", url);
-                                }
+                                    if (response != last_response) {
+                                        last_response = response;
 
-                                if (response != last_response) {
-                                    last_response = response;
+                                        $.get(
+                                            "/session/id/" +
+                                                $session_id +
+                                                "/render/tiles",
+                                            {},
+                                            function (response) {
+                                                function display_tile(
+                                                    value,
+                                                    index
+                                                ) {
+                                                    let numbers =
+                                                        value.match(/\d/g);
+                                                    let xi =
+                                                        numbers[
+                                                            numbers.length - 2
+                                                        ];
+                                                    let yi =
+                                                        numbers[
+                                                            numbers.length - 1
+                                                        ];
 
-                                    $.get(
-                                        "/session/id/" +
-                                            $session_id +
-                                            "/render/tiles",
-                                        {},
-                                        function (response) {
-                                            function display_tile(
-                                                value,
-                                                index
-                                            ) {
-                                                let numbers =
-                                                    value.match(/\d/g);
-                                                let xi =
-                                                    numbers[numbers.length - 2];
-                                                let yi =
-                                                    numbers[numbers.length - 1];
-
-                                                let url =
-                                                    "/static/sessions/" +
-                                                    $session_id +
-                                                    "/frame_one/colour_" +
-                                                    xi +
-                                                    "_" +
-                                                    yi +
-                                                    ".png?" +
-                                                    new Date().getTime();
-                                                $(
-                                                    "#render-tile-" +
+                                                    let url =
+                                                        "/static/sessions/" +
+                                                        $session_id +
+                                                        "/frame_one/colour_" +
                                                         xi +
                                                         "_" +
-                                                        yi
-                                                ).attr("src", url);
+                                                        yi +
+                                                        ".png?" +
+                                                        new Date().getTime();
+                                                    $(
+                                                        "#render-tile-" +
+                                                            xi +
+                                                            "_" +
+                                                            yi
+                                                    ).attr("src", url);
+                                                }
+                                                response.forEach(display_tile);
                                             }
-                                            response.forEach(display_tile);
-                                        }
-                                    );
+                                        );
+                                    }
                                 }
                             }
                         );
