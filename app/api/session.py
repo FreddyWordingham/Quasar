@@ -1,7 +1,8 @@
 from fastapi import APIRouter, Request
-import json
 from pydantic import BaseModel
 from subprocess import Popen
+import glob
+import json
 import os
 import re
 import shutil
@@ -180,3 +181,28 @@ def init_session_filesystem(session_id: str):
     os.makedirs(dir)
 
     return {"dir": dir}
+
+
+@session_route.post("/id/{session_id}/render/stitch")
+async def stitch_tiles(session_id: str):
+    """
+    Stitch the tiles of a rendering.
+    """
+
+    stitch(os.path.join(settings.SESSIONS_DIR, session_id, "frame_one", "colour"))
+
+
+def stitch(file_patturn):
+    """
+    Stich together the individual render tiles at a given patturn.
+    """
+
+    tiles = glob.glob(f"{file_patturn}*")
+    width = len(glob.glob(f"{file_patturn}_0_*"))
+    height = int(len(tiles) / width)
+
+    for n in range(height):
+        slice_patturn = f"{file_patturn}_{n}_*"
+        os.system(f"convert -append {slice_patturn} {file_patturn}_slice_{n}.png")
+
+    os.system(f"convert +append {file_patturn}_slice_* {file_patturn}.png")

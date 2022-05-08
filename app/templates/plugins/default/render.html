@@ -35,7 +35,6 @@
                             {},
                             function (response) {
                                 let x = response.slice(0, -1);
-                                console.log(x + "%");
                                 if (response == "FINISHED\n") {
                                     clearInterval(progress_monitor);
                                     $("#render-run_button").show();
@@ -43,6 +42,24 @@
                                     $("#render-progress_bar")
                                         .css("width", "0%")
                                         .text("");
+
+                                    $.post(
+                                        "/session/id/" +
+                                            $session_id +
+                                            "/render/stitch",
+                                        {},
+                                        function (response) {
+                                            let url =
+                                                "/static/sessions/" +
+                                                $session_id +
+                                                "/frame_one/colour.png?" +
+                                                new Date().getTime();
+                                            $("#render-result").attr(
+                                                "src",
+                                                url
+                                            );
+                                        }
+                                    );
                                 } else {
                                     $("#render-progress_bar")
                                         .css("width", x + "%")
@@ -50,13 +67,6 @@
                                 }
                             }
                         );
-
-                        // let url =
-                        //     "/static/sessions/" +
-                        //     $session_id +
-                        //     "/render.png?" +
-                        //     new Date().getTime();
-                        // $("#render-result").attr("src", url);
                     }, 1000);
                 },
                 error: function (response) {
