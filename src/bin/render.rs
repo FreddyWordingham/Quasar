@@ -6,6 +6,7 @@ use quasar::{
     rt::Ray,
     // util::ProgressBar,
 };
+use rand::{seq::SliceRandom, thread_rng};
 use std::{
     fs,
     path::{Path, PathBuf},
@@ -46,21 +47,25 @@ fn render<T>(output_dir: &Path, input: &Input<T>, camera: &Camera) {
     let tile_res = [camera.res[0] / tiles[0], camera.res[1] / tiles[1]];
 
     // let mut pb = ProgressBar::new("Rendering", tiles[0] * tiles[1]);
+    let mut tile_order = Vec::with_capacity(tiles[0] * tiles[1]);
     for iy in 0..tiles[1] {
         for ix in 0..tiles[0] {
-            let offset = [tile_res[0] * ix, tile_res[1] * iy];
-            let data = render_tile(input, camera, offset, tile_res);
-            data.save(
-                output_dir,
-                &format!("_{:0>3}_{:0>3}", ix, tiles[1] - iy - 1),
-            );
-            // pb.tick();
-            println!(
-                "{:.2}",
-                (iy + (ix * tiles[1])) as f64 / (tiles[0] * tiles[1]) as f64 * 100.0,
-            );
+            tile_order.push((ix, iy));
         }
     }
+    tile_order.shuffle(&mut thread_rng());
+
+    for (n, (ix, iy)) in tile_order.iter().enumerate() {
+        let offset = [tile_res[0] * ix, tile_res[1] * iy];
+        let data = render_tile(input, camera, offset, tile_res);
+        data.save(
+            output_dir,
+            &format!("_{:0>3}_{:0>3}", ix, tiles[1] - iy - 1),
+        );
+        // pb.tick();
+        println!("{:.2}", n as f64 / (tiles[0] * tiles[1]) as f64 * 100.0,);
+    }
+
     // pb.finish_with_message("Rendering complete.");
     println!("FINISHED");
 }
