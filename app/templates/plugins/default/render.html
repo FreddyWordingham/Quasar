@@ -1,3 +1,11 @@
+<style>
+    #render-progress {
+        display: grid;
+        grid-template-columns: repeat(7, auto);
+        grid-gap: 5px;
+    }
+</style>
+
 <textarea id="render-input" class="prism-live language-json fill">
 {{ input }}</textarea
 >
@@ -29,6 +37,25 @@
                     config: config,
                 }),
                 success: function () {
+                    $("#render-result").remove();
+                    $("#display_container").append(
+                        "<div id='render-progress' class='display'></div>"
+                    );
+
+                    const obj = JSON.parse(config);
+                    for (var i = 0; i < obj["settings"]["tiles"][0]; ++i) {
+                        for (var j = 0; j < obj["settings"]["tiles"][1]; ++j) {
+                            $("#render-progress").append(
+                                "<div><img id='render-tile-" +
+                                    i +
+                                    "_" +
+                                    j +
+                                    "'></img></div>"
+                            );
+                        }
+                    }
+
+                    var last_response = "start";
                     let progress_monitor = setInterval(function () {
                         $.get(
                             "/session/id/" + $session_id + "/render/progress",
@@ -42,28 +69,67 @@
                                     $("#render-progress_bar")
                                         .css("width", "0%")
                                         .text("");
-
-                                    $.post(
-                                        "/session/id/" +
-                                            $session_id +
-                                            "/render/stitch",
-                                        {},
-                                        function (response) {
-                                            let url =
-                                                "/static/sessions/" +
-                                                $session_id +
-                                                "/frame_one/colour.png?" +
-                                                new Date().getTime();
-                                            $("#render-result").attr(
-                                                "src",
-                                                url
-                                            );
-                                        }
-                                    );
                                 } else {
                                     $("#render-progress_bar")
                                         .css("width", x + "%")
                                         .text(x + "%");
+
+                                    let url =
+                                        "/static/sessions/" +
+                                        $session_id +
+                                        "/frame_one/colour.png?" +
+                                        new Date().getTime();
+                                    $("#render-result").attr("src", url);
+                                }
+
+                                if (response != last_response) {
+                                    last_response = response;
+
+                                    $.get(
+                                        "/session/id/" +
+                                            $session_id +
+                                            "/render/tiles",
+                                        {},
+                                        function (response) {
+                                            function display_tile(
+                                                value,
+                                                index
+                                            ) {
+                                                let numbers =
+                                                    value.match(/\d/g);
+                                                let xi =
+                                                    numbers[numbers.length - 2];
+                                                let yi =
+                                                    numbers[numbers.length - 1];
+                                                console.log(
+                                                    ">>> " +
+                                                        xi +
+                                                        ":" +
+                                                        yi +
+                                                        " <> " +
+                                                        index
+                                                );
+
+                                                let url =
+                                                    "/static/sessions/" +
+                                                    $session_id +
+                                                    "/frame_one/colour_" +
+                                                    xi +
+                                                    "_" +
+                                                    yi +
+                                                    ".png?" +
+                                                    new Date().getTime();
+                                                $(
+                                                    "#render-tile-" +
+                                                        xi +
+                                                        "_" +
+                                                        yi
+                                                ).attr("src", url);
+                                                console.log(url);
+                                            }
+                                            response.forEach(display_tile);
+                                        }
+                                    );
                                 }
                             }
                         );
@@ -81,10 +147,6 @@
     };
 
     $(document).ready(function () {
-        $("#display_container").append(
-            "<img id='render-result' class='display'></img>"
-        );
-
         $plugin.del["render"] = $render.del;
     });
 </script>

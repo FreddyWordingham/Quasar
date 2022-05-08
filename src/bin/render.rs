@@ -50,7 +50,8 @@ fn render<T>(output_dir: &Path, input: &Input<T>, camera: &Camera) {
         for iy in 0..tiles[1] {
             let offset = [tile_res[0] * ix, tile_res[1] * iy];
             let data = render_tile(input, camera, offset, tile_res);
-            data.save(output_dir, &format!("_{}_{}", ix, tiles[1] - iy - 1));
+            // data.save(output_dir, &format!("_{}_{}", ix, tiles[1] - iy - 1));
+            data.save(output_dir, &format!("_{}_{}", ix, iy));
             // pb.tick();
             println!(
                 "{:.2}",

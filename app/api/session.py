@@ -183,6 +183,22 @@ def init_session_filesystem(session_id: str):
     return {"dir": dir}
 
 
+@session_route.get("/id/{session_id}/render/tiles")
+async def list_tiles(session_id: str):
+    """
+    List the completed tiles filenames.
+    """
+
+    file_patturn = os.path.join(
+        settings.SESSIONS_DIR, session_id, "frame_one", "colour"
+    )
+
+    files = [os.path.basename(f) for f in glob.glob(f"{file_patturn}*")]
+    files.sort()
+
+    return files
+
+
 @session_route.post("/id/{session_id}/render/stitch")
 async def stitch_tiles(session_id: str):
     """
@@ -199,7 +215,7 @@ def stitch(file_patturn):
 
     tiles = glob.glob(f"{file_patturn}*")
     width = len(glob.glob(f"{file_patturn}_0_*"))
-    height = int(len(tiles) / width)
+    height = len(glob.glob(f"{file_patturn}_*_0.png"))
 
     for n in range(height):
         slice_patturn = f"{file_patturn}_{n}_*"
