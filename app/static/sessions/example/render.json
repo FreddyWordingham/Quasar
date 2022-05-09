@@ -26,15 +26,15 @@
         "data_grad": "grayscale"
     },
     "camera": {
-        "pos": [5.0, -5.0, 5.0],
+        "pos": [5.0, -5.0, 3.0],
         "tar": [0.0, 0.0, 0.0],
-        "fov": 20.0,
+        "fov": 45.0,
         "res": [1024, 1024],
         "ss_power": 1
     },
     "surfaces": [
         ["test/surface", "default"],
-        ["test/cube", "chrome"],
-        ["test/torus", "default"]
+        ["test/explosion", "chrome"],
+        ["test/torus", "plasma"]
     ]
 }

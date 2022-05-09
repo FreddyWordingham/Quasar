@@ -68,7 +68,7 @@ fn sample(
         match hit.tag {
             Attribute::Opaque(grad) => {
                 ray.travel(hit.dist);
-                colour(
+                weight = colour(
                     input, camera, &mut ray, weight, pixel, data, rng, norm, grad, 1.0,
                 );
                 break;
@@ -107,8 +107,15 @@ fn sample(
                     trans_ray.dir = trans_dir;
                     trans_ray.travel(bump_dist);
 
-                    weight *= crossing.trans_prob();
-                    sample(input, camera, trans_ray, weight, pixel, data, rng);
+                    sample(
+                        input,
+                        camera,
+                        trans_ray,
+                        weight * crossing.trans_prob(),
+                        pixel,
+                        data,
+                        rng,
+                    );
                     break;
                 }
 
@@ -131,6 +138,7 @@ fn sample(
                     grad,
                     *bright_mult,
                 );
+                weight = 0.0;
                 break;
             }
             Attribute::Switchable([grad_0, grad_1], x) => {
@@ -144,11 +152,14 @@ fn sample(
                         input, camera, &mut ray, weight, pixel, data, rng, norm, grad_1, 1.0,
                     );
                 }
+                weight = 0.0;
                 break;
             }
             _ => {}
         }
     }
+
+    sky_colour(input, &ray, weight, data, pixel);
 }
 
 /// Determine the colour of a ray-surface collision.
@@ -342,4 +353,14 @@ pub fn rand_hemisphere_point(n: i32, max: i32) -> (f64, f64) {
     debug_assert!(n < max);
 
     rand_sphere_point(n, max * 2)
+}
+
+/// Determine the colour of the sky.
+/// Record the data.
+#[inline]
+fn sky_colour(input: &Input, ray: &Ray, weight: f64, data: &mut Output, pixel: [usize; 2]) {
+    let u = ray.dir.z.abs();
+    let col = input.shader.sky_grad.get(u as f32);
+
+    data.colour[pixel] += col * weight as f32;
 }
