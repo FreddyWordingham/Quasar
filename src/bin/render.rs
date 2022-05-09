@@ -12,6 +12,7 @@ use rand::{rngs::ThreadRng, Rng};
 use std::{
     f64::consts::{FRAC_PI_2, PI},
     path::PathBuf,
+    time::Instant,
 };
 
 lazy_static! {
@@ -37,6 +38,9 @@ fn sample(
     data: &mut Output,
     rng: &mut ThreadRng,
 ) {
+    // Watch time.
+    let start_time = Instant::now();
+
     // Unpack.
     let settings = &input.settings;
     let tree = &input.tree;
@@ -168,6 +172,9 @@ fn sample(
     }
 
     sky_colour(input, &ray, weight, data, pixel);
+
+    // Record time.
+    data.time[pixel] += start_time.elapsed().as_micros() as f64;
 }
 
 /// Determine the colour of a ray-surface collision.

@@ -206,3 +206,4 @@ async def stitch_tiles(session_id: str):
     """
 
     stitch(os.path.join(settings.SESSIONS_DIR, session_id, "tiles"), "colour")
+    stitch(os.path.join(settings.SESSIONS_DIR, session_id, "tiles"), "time")

@@ -81,6 +81,7 @@ fn render<
         let offset = [tile_res[0] * ix, tile_res[1] * iy];
         let data = render_tile(input, camera, offset, tile_res, sample.clone());
         data.save(
+            &input.shader,
             output_dir,
             &format!(
                 "{:0>width$}_{:0>width$}",

@@ -17,6 +17,7 @@ lazy_static = "1.4.0"
 linemux = "0.2.3"
 nalgebra = { version = "0.31.0", features = ["serde-serialize"] }
 ndarray = { version = "0.15", features = ["rayon"] }
+ndarray-stats = "0.5.0"
 num_cpus = "1.13.1"
 palette = "0.6.0"
 png = "0.17.5"
