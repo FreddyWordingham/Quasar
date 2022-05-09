@@ -7,7 +7,7 @@
         "padding": 0.01
     },
     "settings": {
-        "tiles": [16, 16],
+        "tiles": [32, 32],
         "bump_dist": 0.001,
         "loop_limit": 1e6,
         "min_weight": 0.01,
@@ -15,25 +15,26 @@
     },
     "shader": {
         "sun_pos": [50.0, 75.0, 100.0],
-        "light": [0.1, 0.6, 0.3],
-        "shadow": [0.8, 0.2],
+        "light": [0.3, 0.5, 0.2],
+        "shadow": [0.3, 0.7],
         "spec_pow": 8,
         "occ_dist": [1.0e3, 1.0e3],
         "fall_off": 5.0,
-        "soft_shadow_samples": null,
-        "ambient_shadow_samples": null,
+        "soft_shadow_samples": [101, 5.0],
+        "ambient_shadow_samples": [101, 2.0],
         "sky_grad": "sunset",
         "data_grad": "grayscale"
     },
     "camera": {
-        "pos": [-5.0, -5.0, 5.0],
+        "pos": [5.0, -5.0, 5.0],
         "tar": [0.0, 0.0, 0.0],
-        "fov": 30.0,
+        "fov": 20.0,
         "res": [1024, 1024],
-        "ss_power": 1
+        "ss_power": 3
     },
     "surfaces": [
         ["test/surface", "default"],
-        ["test/star", "default"]
+        ["test/star", "default"],
+        ["test/explosion", "default"]
     ]
 }

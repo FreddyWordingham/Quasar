@@ -227,9 +227,6 @@ def stitch(file_patturn):
     print_width = int(math.log10(max(width, height))) + 1
     for n in range(height + 1):
         slice_patturn = f"{file_patturn}_{n:0{print_width}}_*"
-        print(
-            f"convert -append {slice_patturn} {file_patturn}_slice_{n:0{print_width}}.png"
-        )
         os.system(
             f"convert -append {slice_patturn} {file_patturn}_slice_{n:0{print_width}}.png"
         )
