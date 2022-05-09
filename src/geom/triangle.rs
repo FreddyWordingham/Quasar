@@ -228,13 +228,35 @@ impl Triangle {
         None
     }
 
+    // /// Determine the distance and facing side of a Ray-Triangle intersection.
+    // #[inline]
+    // #[must_use]
+    // pub fn dist_side(&self, ray: &Ray) -> Option<(f64, Side)> {
+    //     self.dist(ray).map(|dist| {
+    //         let side = Side::new(&ray.dir, self.plane_norm);
+    //         (dist, side)
+    //     })
+    // }
+
     /// Determine the distance and facing side of a Ray-Triangle intersection.
+
     #[inline]
     #[must_use]
     pub fn dist_side(&self, ray: &Ray) -> Option<(f64, Side)> {
-        self.dist(ray).map(|dist| {
-            let side = Side::new(&ray.dir, self.plane_norm);
-            (dist, side)
-        })
+        if let Some((dist, [u, v, w])) = self.intersection_coors(ray) {
+            Some((
+                dist,
+                Side::new(
+                    &ray.dir,
+                    Unit::new_normalize(
+                        (self.norms[1].into_inner() * u)
+                            + (self.norms[2].into_inner() * v)
+                            + (self.norms[0].into_inner() * w),
+                    ),
+                ),
+            ))
+        } else {
+            None
+        }
     }
 }
