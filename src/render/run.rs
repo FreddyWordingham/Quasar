@@ -120,7 +120,7 @@ fn render_tile<T: Fn(&Input<'_>, &Camera, Ray, f64, [usize; 2], &mut Output, &mu
             for ssx in 0..camera.ss_power {
                 for ssy in 0..camera.ss_power {
                     let ray = camera.emit([rx, ry], [ssx, ssy]);
-                    sample(input, &camera, ray, weight, [px, py], &mut data, &mut rng);
+                    sample(input, camera, ray, weight, [px, py], &mut data, &mut rng);
                 }
             }
         }

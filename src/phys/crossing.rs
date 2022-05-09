@@ -36,7 +36,9 @@ impl Crossing {
             Some((n_next / n_curr).asin())
         };
 
-        let (ref_prob, trans_dir) = if crit_ang.is_some() && (ci.acos() >= crit_ang.unwrap()) {
+        let (ref_prob, trans_dir) = if crit_ang.is_some()
+            && (ci.acos() >= crit_ang.expect("Failed to determine critical angle."))
+        {
             (1.0, None)
         } else {
             let s2t = (n * n) * (1.0 - (ci * ci));

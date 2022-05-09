@@ -69,14 +69,14 @@ fn sample(
             Attribute::Opaque(grad) => {
                 ray.travel(hit.dist);
                 colour(
-                    input, &camera, &mut ray, weight, pixel, data, rng, norm, grad, 1.0,
+                    input, camera, &mut ray, weight, pixel, data, rng, norm, grad, 1.0,
                 );
                 break;
             }
             Attribute::Mirror(grad, abs_frac) => {
                 ray.travel(hit.dist);
                 weight = colour(
-                    input, &camera, &mut ray, weight, pixel, data, rng, norm, grad, *abs_frac,
+                    input, camera, &mut ray, weight, pixel, data, rng, norm, grad, *abs_frac,
                 );
                 ray.dir = Crossing::calc_ref_dir(&ray.dir, norm);
                 ray.travel(bump_dist);
@@ -84,14 +84,14 @@ fn sample(
             Attribute::Transparent(grad, abs_frac) => {
                 ray.travel(hit.dist);
                 weight = colour(
-                    input, &camera, &mut ray, weight, pixel, data, rng, norm, grad, *abs_frac,
+                    input, camera, &mut ray, weight, pixel, data, rng, norm, grad, *abs_frac,
                 );
                 ray.travel(bump_dist);
             }
             Attribute::Refractive(grad, abs_frac, [inside, outside]) => {
                 ray.travel(hit.dist);
                 weight = colour(
-                    input, &camera, &mut ray, weight, pixel, data, rng, norm, grad, *abs_frac,
+                    input, camera, &mut ray, weight, pixel, data, rng, norm, grad, *abs_frac,
                 );
 
                 let [curr, next] = if hit.side.is_inside() {
@@ -121,7 +121,7 @@ fn sample(
                 ray.travel(hit.dist);
                 colour(
                     input,
-                    &camera,
+                    camera,
                     &mut ray,
                     weight,
                     pixel,
@@ -137,11 +137,11 @@ fn sample(
                 ray.travel(hit.dist);
                 if ray.pos.z < *x {
                     colour(
-                        input, &camera, &mut ray, weight, pixel, data, rng, norm, grad_0, 1.0,
+                        input, camera, &mut ray, weight, pixel, data, rng, norm, grad_0, 1.0,
                     );
                 } else {
                     colour(
-                        input, &camera, &mut ray, weight, pixel, data, rng, norm, grad_1, 1.0,
+                        input, camera, &mut ray, weight, pixel, data, rng, norm, grad_1, 1.0,
                     );
                 }
                 break;
