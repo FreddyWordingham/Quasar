@@ -1,6 +1,6 @@
 # Quasar
 
-A multi-threaded custom built rendering engine, using Rust for performance, and FastAPI for interfacing.
+A multi-threaded rendering engine written in Rust, and an optional FastAPI web app.
 
 ![app](/app/static/images/app.png)
 
@@ -16,9 +16,10 @@ poetry install
 
 ![colour](/app/static/images/colour.png)
 
-Use the (pure Rust) program directly:
+Use the (pure Rust) program directly to render the image, and then combine the tiles with a python script:
 ```command
 cargo run --bin render --release app/static/sessions example/render.json
+python script/stitch.py app/static/sessions/example/tiles
 ```
 
 ![test](/app/static/images/test.png)
