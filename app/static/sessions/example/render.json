@@ -20,21 +20,20 @@
         "spec_pow": 8,
         "occ_dist": [1.0e3, 1.0e3],
         "fall_off": 5.0,
-        "soft_shadow_samples": [40, 5.0],
-        "ambient_shadow_samples": [64, 2],
+        "soft_shadow_samples": null,
+        "ambient_shadow_samples": null,
         "sky_grad": "sunset",
         "data_grad": "grayscale"
     },
     "camera": {
-        "pos": [-54.0, -50.0, 15.0],
-        "tar": [3.0, -20.0, 5.0],
+        "pos": [-5.0, -5.0, 5.0],
+        "tar": [0.0, 0.0, 0.0],
         "fov": 30.0,
         "res": [1024, 1024],
         "ss_power": 1
     },
     "surfaces": [
-        ["dome/knot", "default"],
-        ["dome/bottom", "default"],
-        ["dome/floor", "default"]
+        ["test/surface", "default"],
+        ["test/star", "default"]
     ]
 }
