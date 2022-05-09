@@ -13,10 +13,13 @@ use crate::{
     rt::Ray,
     util::ProgressBar,
 };
+use rand::rngs::ThreadRng;
 
 /// Run the simulation with the given parameterisation.
 #[inline]
-pub fn run<T: Fn(&Input<'_>, Ray, f32, [usize; 2], &mut Output) + Send + Sync + Copy>(
+pub fn run<
+    T: Fn(&Input<'_>, &Camera, Ray, f64, [usize; 2], &mut Output, &mut ThreadRng) + Send + Sync + Copy,
+>(
     parameters: &Parameters,
     sample: T,
 ) {
@@ -47,7 +50,12 @@ pub fn run<T: Fn(&Input<'_>, Ray, f32, [usize; 2], &mut Output) + Send + Sync + 
 /// Perform the rendering.
 #[allow(clippy::integer_division)]
 #[inline]
-fn render<T: Fn(&Input<'_>, Ray, f32, [usize; 2], &mut Output) + Send + Sync + Clone>(
+fn render<
+    T: Fn(&Input<'_>, &Camera, Ray, f64, [usize; 2], &mut Output, &mut ThreadRng)
+        + Send
+        + Sync
+        + Clone,
+>(
     output_dir: &Path,
     input: &Input,
     camera: &Camera,
@@ -92,7 +100,7 @@ fn render<T: Fn(&Input<'_>, Ray, f32, [usize; 2], &mut Output) + Send + Sync + C
 /// Render a sub-tile.
 #[inline]
 #[must_use]
-fn render_tile<T: Fn(&Input<'_>, Ray, f32, [usize; 2], &mut Output)>(
+fn render_tile<T: Fn(&Input<'_>, &Camera, Ray, f64, [usize; 2], &mut Output, &mut ThreadRng)>(
     input: &Input,
     camera: &Camera,
     offset: [usize; 2],
@@ -101,7 +109,8 @@ fn render_tile<T: Fn(&Input<'_>, Ray, f32, [usize; 2], &mut Output)>(
 ) -> Output {
     let mut data = Output::new(sub_res);
 
-    let weight = 1.0 / (camera.ss_power * camera.ss_power) as f32;
+    let weight = 1.0 / (camera.ss_power * camera.ss_power) as f64;
+    let mut rng = thread_rng();
 
     for px in 0..sub_res[0] {
         for py in 0..sub_res[1] {
@@ -111,7 +120,7 @@ fn render_tile<T: Fn(&Input<'_>, Ray, f32, [usize; 2], &mut Output)>(
             for ssx in 0..camera.ss_power {
                 for ssy in 0..camera.ss_power {
                     let ray = camera.emit([rx, ry], [ssx, ssy]);
-                    sample(input, ray, weight, [px, py], &mut data);
+                    sample(input, &camera, ray, weight, [px, py], &mut data, &mut rng);
                 }
             }
         }

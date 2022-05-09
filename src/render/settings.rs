@@ -13,4 +13,6 @@ pub struct Settings {
     pub loop_limit: u64,
     /// Minimum statistical weight to continue simulating.
     pub min_weight: f64,
+    /// Maximum ray travel distance.
+    pub max_distance: f64,
 }

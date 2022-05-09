@@ -3,6 +3,7 @@
 use nalgebra::{Point3, Rotation3, Unit, Vector3};
 
 /// Point and direction.
+#[derive(Clone)]
 pub struct Ray {
     /// Ray origin.
     pub pos: Point3<f64>,

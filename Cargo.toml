@@ -13,6 +13,7 @@ hex = "0.4"
 indicatif = "0.16.2"
 itertools = "0.10.3"
 json5 = "0.4"
+lazy_static = "1.4.0"
 linemux = "0.2.3"
 nalgebra = { version = "0.31.0", features = ["serde-serialize"] }
 ndarray = { version = "0.15", features = ["rayon"] }
