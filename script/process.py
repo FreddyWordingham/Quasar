@@ -1,29 +1,39 @@
 import glob
-import sys
+import math
 import os
+import sys
 
 
-def stitch(file_patturn):
+def stitch(input_dir, kind):
     """
     Stich together the individual render tiles at a given patturn.
     """
 
-    tiles = glob.glob(f"{file_patturn}*")
-    width = len(glob.glob(f"{file_patturn}_0_*"))
-    height = int(len(tiles) / width)
+    pattern = os.path.join(input_dir, kind)
 
-    for n in range(height):
-        slice_patturn = f"{file_patturn}_{n}_*"
-        os.system(f"convert -append {slice_patturn} {file_patturn}_slice_{n}.png")
+    tiles = glob.glob(f"{pattern}_*")
+    width = 0
+    height = 0
+    for name in tiles:
+        parts = name.split("_")
+        xi = int(parts[-2])
+        yi = int(parts[-1].split(".")[0])
+        if xi > width:
+            width = xi
+        if yi > height:
+            height = yi
 
-    os.system(f"convert +append {file_patturn}_slice_* {file_patturn}.png")
+    print_width = int(math.log10(max(width, height))) + 1
+    for n in range(height + 1):
+        slice_patturn = f"{pattern}_{n:0{print_width}}_*"
+        os.system(
+            f"convert -append {slice_patturn} {pattern}-slice-{n:0{print_width}}.png"
+        )
+
+    os.system(f"convert +append {pattern}-slice-* {os.path.join(input_dir, kind)}.png")
+    os.system(f"open {pattern}.png")
 
 
 if __name__ == "__main__":
     input_dir = sys.argv[1]
-    for sub_dir in [
-        f
-        for f in os.listdir(input_dir)
-        if not os.path.isfile(os.path.join(input_dir, f))
-    ]:
-        stitch(os.path.join(input_dir, sub_dir, "colour"))
+    stitch(input_dir, "colour")

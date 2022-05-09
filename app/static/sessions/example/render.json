@@ -30,11 +30,10 @@
         "tar": [0.0, 0.0, 0.0],
         "fov": 20.0,
         "res": [1024, 1024],
-        "ss_power": 3
+        "ss_power": 1
     },
     "surfaces": [
         ["test/surface", "default"],
-        ["test/star", "default"],
-        ["test/explosion", "default"]
+        ["test/cube", "default"]
     ]
 }

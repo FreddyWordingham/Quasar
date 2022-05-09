@@ -204,15 +204,17 @@ async def stitch_tiles(session_id: str):
     Stitch the tiles of a rendering.
     """
 
-    stitch(os.path.join(settings.SESSIONS_DIR, session_id, "tiles", "colour"))
+    stitch(os.path.join(settings.SESSIONS_DIR, session_id, "tiles"), "colour")
 
 
-def stitch(file_patturn):
+def stitch(input_dir, kind):
     """
     Stich together the individual render tiles at a given patturn.
     """
 
-    tiles = glob.glob(f"{file_patturn}*")
+    pattern = os.path.join(input_dir, kind)
+
+    tiles = glob.glob(f"{pattern}_*")
     width = 0
     height = 0
     for name in tiles:
@@ -226,9 +228,10 @@ def stitch(file_patturn):
 
     print_width = int(math.log10(max(width, height))) + 1
     for n in range(height + 1):
-        slice_patturn = f"{file_patturn}_{n:0{print_width}}_*"
+        slice_patturn = f"{pattern}_{n:0{print_width}}_*"
         os.system(
-            f"convert -append {slice_patturn} {file_patturn}_slice_{n:0{print_width}}.png"
+            f"convert -append {slice_patturn} {pattern}-slice-{n:0{print_width}}.png"
         )
 
-    os.system(f"convert +append {file_patturn}_slice_* {file_patturn}.png")
+    os.system(f"convert +append {pattern}-slice-* {os.path.join(input_dir, kind)}.png")
+    os.system(f"open {pattern}.png")
