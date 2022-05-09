@@ -34,6 +34,7 @@
     },
     "surfaces": [
         ["test/surface", "default"],
-        ["test/cube", "default"]
+        ["test/cube", "chrome"],
+        ["test/torus", "default"]
     ]
 }

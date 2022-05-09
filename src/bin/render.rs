@@ -159,7 +159,7 @@ fn colour(
     input: &Input,
     camera: &Camera,
     ray: &mut Ray,
-    mut weight: f64,
+    weight: f64,
     pixel: [usize; 2],
     data: &mut Output,
     rng: &mut ThreadRng,
@@ -177,10 +177,9 @@ fn colour(
     let col = Gradient::new(vec![LinSrgba::default(), base_col]).get(shadow as f32);
 
     // Colouring.
-    weight *= abs_frac;
-    data.colour[pixel] += col * weight as f32;
+    data.colour[pixel] += col * (abs_frac * weight) as f32;
 
-    weight
+    weight * (1.0 - abs_frac)
 }
 
 /// Calculate the lighting factor.
