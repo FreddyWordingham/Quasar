@@ -3,25 +3,23 @@
     "output_dir": "app/static/sessions/example",
     "tree": {
         "tar_tris": 5,
-        "max_depth": 6,
+        "max_depth": 8,
         "padding": 0.01
     },
     "settings": {
-        "tiles": [32, 32],
-        "bump_dist": 0.001,
+        "tiles": [16, 16],
+        "bump_dist": 0.011,
         "loop_limit": 1e6,
         "min_weight": 0.01,
         "max_distance": 1.0e3
     },
     "shader": {
-        "sun_pos": [10.0, 10.0, 20.0],
+        "sun_pos": [20.0, 40.0, 50.0],
         "light": [0.3, 0.5, 0.2],
         "shadow": [0.3, 0.7],
         "spec_pow": 8,
         "occ_dist": [1.0e3, 1.0e3],
         "fall_off": 5.0,
-        "soft_shadow_samples": [101, 5.0],
-        "ambient_shadow_samples": [101, 2.0],
         "sky_grad": "royal",
         "data_grad": "grayscale"
     },
@@ -30,11 +28,11 @@
         "tar": [0.0, 0.0, 3.0],
         "fov": 45.0,
         "res": [1024, 1024],
-        "ss_power": 3
+        "ss_power": 1
     },
     "surfaces": [
-        ["test/surface", "grass"],
-        ["test/trunk", "rock"],
-        ["test/leaves", "rainbow"]
+        ["orbit/dome", "default"],
+        ["orbit/ground", "default"],
+        ["orbit/stones", "default"]
     ]
 }

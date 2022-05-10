@@ -31,7 +31,7 @@ def stitch(input_dir, kind):
         )
 
     os.system(f"convert +append {pattern}-slice-* {os.path.join(input_dir, kind)}.png")
-    os.system(f"open {pattern}.png")
+    # os.system(f"open {pattern}.png")
 
 
 if __name__ == "__main__":
