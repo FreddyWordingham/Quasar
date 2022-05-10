@@ -7,7 +7,7 @@
         "padding": 0.01
     },
     "settings": {
-        "tiles": [16, 16],
+        "tiles": [43, 18],
         "bump_dist": 0.001,
         "loop_limit": 1e6,
         "min_weight": 0.01,
