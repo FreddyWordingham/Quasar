@@ -94,17 +94,8 @@ fn sample(
             }
             Attribute::Refractive(grad, abs_frac, [inside, outside]) => {
                 ray.travel(hit.dist);
-                weight = colour(
-                    input,
-                    camera,
-                    &mut ray,
-                    weight * abs_frac,
-                    pixel,
-                    data,
-                    rng,
-                    norm,
-                    grad,
-                    *abs_frac,
+                colour(
+                    input, camera, &mut ray, weight, pixel, data, rng, norm, grad, *abs_frac,
                 );
 
                 let [curr, next] = if hit.side.is_inside() {
@@ -129,6 +120,7 @@ fn sample(
                         data,
                         rng,
                     );
+                    break;
                 }
 
                 // Continuing reflection ray.
