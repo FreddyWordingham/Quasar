@@ -24,7 +24,7 @@ def stitch(input_dir, kind):
             height = yi
 
     print_width = int(math.log10(max(width, height))) + 1
-    for n in range(height + 1):
+    for n in range(width + 1):
         slice_patturn = f"{pattern}_{n:0{print_width}}_*"
         os.system(
             f"convert -append {slice_patturn} {pattern}-slice-{n:0{print_width}}.png"
